@@ -1,0 +1,199 @@
+/* styles/chefDashboard.module.css */
+
+/* 
+   The outer container that applies the gradient background 
+   specifically to the chef dashboard page 
+*/
+.chefDashboardBg {
+  min-height: 100vh;
+  /* A nice soft gradient background */
+  background: linear-gradient(120deg, #fdfbfb 0%, #ebedee 100%);
+  margin: 0;
+  padding: 24px;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  /* If you want text color consistent, you can set color: #333; here as well */
+}
+
+/* Container for the actual dashboard content */
+.dashboardContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  color: #333;
+}
+
+/* Title and subtitle */
+.dashboardTitle {
+  font-size: 2rem;
+  margin-bottom: 8px;
+  text-align: center;
+  font-weight: 600;
+  color: #444;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  text-align: center;
+  margin-bottom: 20px;
+  color: #666;
+}
+
+/* Error or no-orders message */
+.errorMessage {
+  color: #c62828;
+  text-align: center;
+  margin: 16px 0;
+}
+
+.noOrdersText {
+  text-align: center;
+  color: #888;
+}
+
+/* Each order card */
+.orderCard {
+  background-color: #fff;
+  border: 1px solid #eee;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 24px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.orderCard:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+}
+
+/* The top of the card with order ID and status */
+.cardHeader {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.orderId {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #555;
+}
+
+/* The status badge, color-coded via additional classes */
+.statusBadge {
+  font-size: 0.9rem;
+  font-weight: 600;
+  padding: 4px 8px;
+  border-radius: 4px;
+  color: #fff;
+  text-transform: capitalize;
+}
+
+/* Example status classes (add more if needed) */
+.pending {
+  background-color: #ff9800;
+}
+.accepted {
+  background-color: #2196f3;
+}
+.cooking {
+  background-color: #f57c00;
+}
+.ready {
+  background-color: #4caf50;
+}
+.delivering {
+  background-color: #ff5722;
+}
+.completed {
+  background-color: #8bc34a;
+}
+
+/* Recipe section includes an image on the left, details on the right */
+.recipeSection {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+  margin-bottom: 12px;
+}
+
+.recipeImage {
+  width: 140px;
+  height: 140px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #eee;
+}
+
+.recipeInfo {
+  flex: 1;
+}
+
+.recipeTitle {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin: 0 0 4px;
+  color: #333;
+}
+
+.deliveryAddress {
+  font-size: 0.95rem;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* Instructions container: toggle with a button */
+.instructionsContainer {
+  margin: 12px 0;
+}
+
+.instructionsToggle {
+  background: none;
+  color: #2196f3;
+  border: none;
+  padding: 0;
+  font-size: 0.95rem;
+  cursor: pointer;
+  text-decoration: underline;
+  margin-bottom: 8px;
+}
+
+.instructionsToggle:hover {
+  color: #1976d2;
+}
+
+.instructionsContent {
+  background-color: #fafafa;
+  border: 1px solid #eee;
+  border-radius: 6px;
+  padding: 12px;
+  margin-top: 8px;
+}
+
+.instructionsContent h3 {
+  margin-top: 0;
+  margin-bottom: 8px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* Action buttons row */
+.buttonRow {
+  margin-top: 16px;
+}
+
+/* Common button style for Accept, Cooking, Ready */
+.actionButton {
+  background-color: #58c;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  font-size: 0.95rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: background-color 0.2s ease;
+}
+
+.actionButton:hover {
+  background-color: #46a;
+}

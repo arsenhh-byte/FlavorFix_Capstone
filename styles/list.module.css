@@ -1,0 +1,96 @@
+.container {
+  padding: 20px;
+}
+
+.cookThisButton {
+  font-family: "Raleway", sans-serif;
+  font-size: 12px;
+  margin-top: 10px;
+  color: #ffffff;
+  background-color: #4ecba2;
+  border: 2px solid #4ecba2;
+  border-radius: 20px;
+  padding: 5px;
+  text-decoration: none;
+}
+
+.cookThisButton:hover {
+  cursor: pointer;
+  color: #fcd8c5;
+}
+
+.recipeListContainer {
+  margin-top: 5px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.recipeList {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.recipeCard {
+  width: 33%;
+  margin-bottom: 20px;
+  background-color: white;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  flex-grow: 1;
+  max-width: 250px;
+}
+
+.recipeImg {
+  width: 80%;
+  max-width: 200px;
+  height: auto;
+  border-radius: 5px;
+  padding: 10px 5.5%;
+}
+
+.recipeDetails {
+  padding: 5px;
+  text-align: center;
+  margin-top: -20px;
+}
+
+.recipeName {
+  font-family: "Raleway", sans-serif;
+  font-weight: 400;
+  font-size: 16px;
+  color: black;
+}
+
+.loadMoreButton {
+  font-family: "Palatino", serif;
+  font-size: 14px;
+  background-color: #4ecba2;
+  border-width: 0;
+  height: 50px;
+  width: 100px;
+  cursor: pointer;
+  display: block;
+  margin: auto;
+  margin-top: 40px;
+}
+
+.loadMoreButton:hover {
+  color: white;
+}
+
+/* Tablet Styles */
+@media only screen and (min-width: 481px) and (max-width: 768px) {
+  .recipeCard {
+    width: calc(50% - 20px);
+  }
+}
+
+/* Mobile Styles */
+@media only screen and (max-width: 480px) {
+  .recipeCard {
+    width: calc(100% - 20px);
+  }
+}

@@ -1,0 +1,111 @@
+/* styles/orders.module.css */
+
+/* Container for the entire orders page */
+.ordersContainer {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  font-family: Arial, sans-serif;
+  color: #333;
+}
+
+/* Each order card */
+.orderCard {
+  background-color: #fff;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  padding: 16px;
+  margin-bottom: 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease;
+}
+
+.orderCard:hover {
+  transform: translateY(-3px);
+}
+
+/* Header of each order card: shows Order ID and Status */
+.orderHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.orderId {
+  font-size: 1rem;
+  font-weight: bold;
+  color: #555;
+}
+
+.orderStatus {
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 4px 8px;
+  border-radius: 4px;
+}
+
+/* Status colors: adjust as needed */
+.orderStatus.pending {
+  background-color: #ffeb3b;
+  color: #6d4c41;
+}
+.orderStatus.accepted,
+.orderStatus.cooking {
+  background-color: #4caf50;
+  color: #fff;
+}
+.orderStatus.ready {
+  background-color: #03a9f4;
+  color: #fff;
+}
+.orderStatus.delivering {
+  background-color: #ff9800;
+  color: #fff;
+}
+.orderStatus.completed {
+  background-color: #8bc34a;
+  color: #fff;
+}
+.orderStatus.cancelled {
+  background-color: #f44336;
+  color: #fff;
+}
+
+/* Order details section */
+.orderDetails {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+/* Cart items list */
+.cartItem {
+  font-size: 0.9rem;
+  margin-left: 10px;
+  margin-bottom: 4px;
+}
+
+/* A common button style */
+.button {
+  background-color: #58c;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  font-size: 0.95rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-top: 10px;
+  transition: background-color 0.2s ease;
+}
+
+.button:hover {
+  background-color: #46a;
+}
+
+/* Optionally, style a header title */
+.pageTitle {
+  font-size: 1.8rem;
+  margin-bottom: 20px;
+  text-align: center;
+}

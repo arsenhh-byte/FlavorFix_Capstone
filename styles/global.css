@@ -1,0 +1,547 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Raleway:wght@400&display=swap");
+/* Body styles */
+.body {
+  font-family: "Raleway", sans-serif;
+  background-color: #ebeadf;
+  color: #333;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.body-content {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-left: 110px;
+  position: relative;
+  width: calc(100% - 220px);
+  float: left;
+  margin: 20px 10px;
+}
+
+.right-image-container {
+  position: relative;
+  margin: 5px;
+}
+
+.right-image {
+  width: 200px;
+  padding: 10px 30px;
+  margin: 10px;
+}
+
+/* Header styles */
+.header {
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  background-size: cover;
+  background-position: center;
+  height: 45%;
+}
+
+.userName{
+  font-family: "Raleway", sans-serif;
+  color: #4ecba2;
+  font-size: 20px;
+  font-weight: bold;
+  text-shadow: -1px 1px 0 #2e2c2c,
+               -2.5px -0.5px 0 white,
+               -0.5px 1px 0 white,
+                0px -1px  white
+}
+
+.strong{
+  font-family: "Raleway", sans-serif;
+  color: black;
+  font-size: 18px;
+  font-weight: bold;
+}
+
+.button-ind {
+  font-family: "Raleway", sans-serif;
+  font-size: 16px;
+  color: white;
+  background-color: #4ecba2;
+  border: 1px solid lightgrey;
+  border-radius: 0px;
+  padding: 10px 20px;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    color 0.2s,
+    border-color 0.2s;
+}
+
+.button-ind:hover {
+  color: black
+}
+
+.logo-container {
+  flex: 1;
+  text-align: left;
+}
+
+.header-logo {
+  max-width: 100%;
+  height: auto;
+}
+
+.hamburger-menu {
+  display: block;
+  position: relative;
+  color: #4ecba2;
+  font-size: 36px;
+  text-align: center;
+}
+
+.hamburger-menu-icon {
+  display: block;
+  cursor: pointer;
+  font-size: 24px;
+}
+
+.hamburger-menu-content {
+  display: none;
+  position: absolute;
+  background-color: #f9f9f9;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.2);
+  z-index: 1;
+}
+
+.hamburger-menu-content a {
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+}
+
+.hamburger-menu-content a:hover {
+  background-color: #4ecba2;
+}
+
+.hamburger-menu:hover .hamburger-menu-content {
+  display: block;
+}
+
+/* Body content styles */
+.main {
+  height: 45%;
+  overflow-y: auto;
+  background-color: #ebeadf;
+}
+
+.showMenuNav {
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  background: white;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+}
+
+.hideMenuNav {
+  display: none;
+}
+
+.title {
+  font-family: "Raleway", sans-serif;
+  font-weight: bold;
+  font-size: 40px;
+  color: black;
+  text-align: left;
+}
+
+.subtitle {
+  font-family: "Raleway", sans-serif;
+  font-size: 20px;
+  color: black;
+  text-align: left;
+  max-width: 600px;
+  margin: 5px;
+}
+
+.subtitle-container {
+  max-width: 600px;
+  min-width: 220px;
+}
+
+/* Footer specific styles */
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #4ecba2;
+  padding: 20px;
+  color: #000;
+}
+
+.footer-link {
+  font-family: "Raleway", sans-serif;
+  font-size: 14px;
+  color: #000;
+  text-decoration: underline;
+  margin: 15px 10px;
+  text-align: left;
+}
+
+.footer-text {
+  font-family: "Raleway", sans-serif;
+  font-size: 14px;
+  text-align: center;
+  flex: 1;
+  padding: 5px;
+}
+
+.footer-contact {
+  font-family: "Raleway", sans-serif;
+  font-size: 14px;
+  text-align: left;
+  margin-right: auto;
+}
+
+.footer-link:hover,
+.footer-text:hover {
+  text-decoration: none;
+}
+
+.social-icons {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+}
+
+.social-icons a {
+  display: flex;
+  justify-content: center;
+}
+
+-section {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: flex-end;
+  padding: 5px;
+  margin-top: 10px;
+}
+
+.search-section * {
+  margin: 8px;
+}
+
+/* Log In */
+
+.login-modal {
+  position: fixed;
+  top: 20%;
+  right: 0;
+  transform: translateY(-50%);
+  width: 300px;
+  background-color: white;
+  padding: 10px 15px 5px 5px;
+  margin-right: 8px;
+  border-radius: 10px;
+  border: 1.5px solid lightgrey;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: 20px 20px;
+}
+
+.login {
+  font-family: "Raleway", sans-serif;
+  font-size: 13px;
+  margin-top: 20px;
+  color: #ffffff;
+  background-color: #4ecba2;
+  border: 2px solid #4ecba2;
+  border-radius: 20px;
+  padding: 10px;
+  text-decoration: none;
+}
+
+.loginContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+  height: 100%;
+}
+
+.inputLogin {
+  font-family: "Raleway", sans-serif;
+  font-size: 13px;
+  color: black;
+  background-color: white;
+  border: 1px solid lightgrey;
+  padding: 10px 20px;
+  width: 70%;
+  cursor: pointer;
+  margin: 20px;
+}
+
+.loginSubmit {
+  font-family: "Raleway", sans-serif;
+  font-size: 13px;
+  color: white;
+  background-color: #4ecba2;
+  border: 2px solid #4ecba2;
+  border-radius: 35px;
+  padding: 10px 20px;
+  cursor: pointer;
+  transition:
+    background-color 0.2s,
+    color 0.2s;
+}
+
+.loginSubmit:hover {
+  background-color: white;
+  color: #4ecba2;
+}
+
+form {
+  display: block;
+  margin: 5px;
+  unicode-bidi: isolate;
+}
+
+.closeButton {
+  background-color: #ccc;
+  color: #fff;
+  border: none;
+  padding: 8px 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  top: 10px;
+  right: 10px;
+  margin-bottom: 15px;
+}
+
+.closeButton:hover {
+  background-color: #999;
+}
+
+.join-us-button {
+  font-family: Palatino, serif;
+  font-size: 18px;
+  background-color: #4ecba2;
+  border-width: 0;
+  height: 80px;
+  width: 250px;
+  cursor: pointer;
+  display: block;
+  margin: auto;
+  margin-top: 30px;
+}
+
+.join-us-button:hover {
+  color: #fcd8c5;
+}
+
+.header-buttons {
+  border-radius: 0;
+  gap: 0;
+  display: none;
+  flex-direction: column;
+}
+
+.header-buttons-active {
+  display: flex;
+}
+
+.favmessage{
+  font-family: "Raleway", sans-serif;
+  color: red;
+  font-weight: bold;
+}
+
+.p{
+  font-family: "Raleway", sans-serif;
+  color: red;
+  font-weight: bold;
+}
+
+@media only screen and (max-width: 768px) {
+  
+  .social-icons a {
+    flex-wrap: wrap;
+    margin: 0px 0px 10px;
+    text-align: center;
+    padding: 10px;
+  }
+
+  .button-ind {
+    opacity: 0.8;
+    padding: 20px 30px;
+    width: 100%;
+    color: white;
+    font-weight: bold;
+  }
+
+  .right-image {
+    margin: 5px 10px 10px;
+    padding: 0;
+    justify-content: center;
+  }
+
+  .body-content {
+    flex-wrap: wrap;
+  }
+
+  .login {
+    margin: 20px 20px;
+  }
+
+  .inputLogin {
+    width: 50%;
+    margin: 20px 5px;
+  }
+
+  .loginSubmit {
+    width: 45%;
+    margin: 10px 10px;
+  }
+
+  .login-modal {
+    width: 195px;
+    top: 40%;
+    max-width: 300px;
+    padding: 10px;
+  }
+}
+
+.login-container {
+  height: auto;
+  width: 200px;
+  padding: 5px;
+}
+
+.login-form {
+  margin-bottom: 10px;
+}
+
+.footer {
+  display: flex;
+  flex-flow: row;
+}
+
+.footer-link {
+  padding: 10px;
+}
+
+@media only screen and (min-width: 768px) {
+  .hamburger-menu {
+    display: none;
+    text-align: right;
+  }
+
+  .header-buttons {
+    display: flex;
+    flex-direction: row;
+    gap: 4px;
+    border-radius: 15px;
+  }
+
+  .button-ind {
+    margin: 10px;
+    border-radius: 30px;
+    border: 0;
+  }
+
+  .social-icons a {
+    margin: 0 5px;
+    text-align: right;
+  }
+}
+
+.svg {
+  color: black;
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 6;
+}
+
+@media only screen and (max-width: 768px) {
+  .body-content {
+    padding-left: 0;
+    width: 100%; 
+    justify-content: flex-start; 
+    flex-direction: column; 
+    text-align: center; 
+  }
+
+  /* SearchBar styles */
+  .searchContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+  }
+
+  .searchInput {
+    margin-bottom: 10px;
+  }
+
+  .smallButton {
+    margin: 5px;
+  }
+
+  .join-us-button {
+    width: 200px;
+  }
+
+  /* RecipeList styles */
+  .recipeListContainer {
+    margin-top: 20px;
+  }
+
+  .recipeList {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 20px;
+  }
+
+  .recipeCard {
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+  }
+
+  .recipeImg {
+    width: 100%;
+    border-radius: 5px;
+  }
+
+  .recipeDetails {
+    margin-top: 10px;
+  }
+
+  .cookThisButton,
+  .favoriteButton {
+    margin-top: 10px;
+  }
+
+  .footer {
+    display: flex;
+    flex-flow: column;
+  }
+}

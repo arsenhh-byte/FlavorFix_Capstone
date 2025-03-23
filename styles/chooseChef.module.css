@@ -1,0 +1,98 @@
+/* styles/chooseChef.module.css */
+
+.chooseChefContainer {
+    padding: 20px;
+    text-align: center;
+    max-width: 1200px;
+    margin: 0 auto; /* center the container on the page */
+  }
+  
+  .carouselOuter {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 20px;
+  }
+  
+  /* The horizontally scrollable container */
+  .chefsCarousel {
+    display: flex;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-behavior: smooth;
+    gap: 20px;
+    /* Hide scrollbar in most browsers */
+    -ms-overflow-style: none;       /* IE 10+ */
+    scrollbar-width: none;          /* Firefox */
+    max-width: 900px;               /* adjust if needed */
+    background-color: #f9f9f9;      /* subtle background */
+    padding: 10px;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin: 0 auto; /* center horizontally within .carouselOuter */
+  }
+  
+  .chefsCarousel::-webkit-scrollbar {
+    display: none; /* hide scrollbar in Chrome/Safari/Opera */
+  }
+  
+  .chefCard {
+    width: 220px;
+    flex-shrink: 0;
+    border: none;          /* remove border */
+    border-radius: 5px;
+    padding: 10px;
+    background-color: #fff;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    text-align: center;
+  }
+  
+  .chefImage {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;    /* crop to show face */
+    object-position: 50% 20%; /* shift down slightly if needed */
+    border-radius: 5px;
+  }
+  
+  .chefName {
+    margin: 10px 0 5px;
+  }
+  
+  .chefDesc {
+    font-size: 0.9rem;
+    margin-bottom: 10px;
+  }
+  
+  .selectChefButton {
+    background-color: #58c;
+    color: #fff;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    border-radius: 4px;
+    margin-top: 5px;
+  }
+  
+  .selectChefButton:hover {
+    background-color: #46a;
+  }
+  
+  .arrowButton {
+    background-color: #58c;
+    color: #fff;
+    border: none;
+    font-size: 1.5rem;
+    width: 40px;
+    height: 40px;
+    cursor: pointer;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .arrowButton:hover {
+    background-color: #46a;
+  }
