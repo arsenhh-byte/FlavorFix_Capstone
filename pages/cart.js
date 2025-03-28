@@ -1,83 +1,78 @@
-// pages/cart.js
-import React from "react";
+import React, { useState } from "react";
+import { useSession } from "next-auth/react";
 import { useCart } from "../context/CartContext";
-import { useRouter } from "next/router";
-import styles from "../styles/cart.module.css";
 
-export default function CartPage() {
-  const { cartItems, removeFromCart, clearCart, incrementQuantity, decrementQuantity } = useCart();
-  const router = useRouter();
+export default function Cart() {
+  const { data: session } = useSession();
+  const { cartItems, clearCart } = useCart();
+  const [location, setLocation] = useState("");
+  const [error, setError] = useState("");
 
-  // Calculate total items in the cart
-  const totalItems = cartItems.reduce((sum, item) => sum + item.quantity, 0);
+  // Example "Place Order" function
+  const handlePlaceOrder = async () => {
+    if (!session) {
+      setError("Please log in to place an order.");
+      return;
+    }
+    if (cartItems.length === 0) {
+      setError("Your cart is empty.");
+      return;
+    }
 
-  // Checkout function—this is a placeholder for your real checkout integration.
-  const handleCheckout = () => {
-    if (cartItems.length === 0) {
-      alert("Your cart is empty. Please add items first.");
-      return;
-    }
-    // You could, for example, combine the delivery address from each item here or assume they’re the same.
-    alert("Order placed! Thank you for your purchase.");
-    clearCart();
-    router.push("/");
-  };
+    setError("");
+    console.log("[Cart] Placing order with items:", cartItems);
 
-  return (
-    <div className={styles.cartContainer}>
-      <h1>Your Cart</h1>
-      {cartItems.length === 0 ? (
-        <p className={styles.emptyMessage}>Your cart is empty.</p>
-      ) : (
-        <>
-          <ul className={styles.cartList}>
-            {cartItems.map((item) => (
-              <li key={item.id} className={styles.cartItem}>
-                <img src={item.image} alt={item.title} className={styles.itemImage} />
-                <div className={styles.itemDetails}>
-                  <h3>{item.title}</h3>
-                  {item.chef && <p><em>Chef: {item.chef.name}</em></p>}
-                  {item.deliveryAddress && (
-                    <p className={styles.deliveryAddress}>
-                      Delivery Address: {item.deliveryAddress}
-                    </p>
-                  )}
-                  <div className={styles.quantityControls}>
-                    <button
-                      onClick={() => decrementQuantity(item.id)}
-                      className={styles.qtyButton}
-                    >
-                      –
-                    </button>
-                    <span className={styles.qtyValue}>{item.quantity}</span>
-                    <button
-                      onClick={() => incrementQuantity(item.id)}
-                      className={styles.qtyButton}
-                    >
-                      +
-                    </button>
-                  </div>
-                </div>
-                <button onClick={() => removeFromCart(item.id)} className={styles.removeButton}>
-                  Remove
-                </button>
-              </li>
-            ))}
-          </ul>
+    try {
+      const response = await fetch("/api/orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          cartItems,
+          location: location || "", // optional
+        }),
+      });
+      const data = await response.json();
+      console.log("[Cart] POST /api/orders response:", data);
 
-          <div className={styles.cartFooter}>
-            <p className={styles.totalItems}>
-              Total Items: <strong>{totalItems}</strong>
-            </p>
-            <button onClick={clearCart} className={styles.clearButton}>
-              Clear Cart
-            </button>
-            <button onClick={handleCheckout} className={styles.checkoutButton}>
-              Checkout
-            </button>
-          </div>
-        </>
-      )}
-    </div>
-  );
+      if (data.success) {
+        alert("Order created successfully!");
+        // Optionally clear the cart or redirect
+        clearCart();
+      } else {
+        setError("Error: " + data.message);
+      }
+    } catch (err) {
+      console.error("[Cart] Error placing order:", err);
+      setError("Failed to place order. See console for details.");
+    }
+  };
+
+  return (
+    <div style={{ padding: "20px" }}>
+      <h1>My Cart</h1>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {cartItems.length === 0 ? (
+        <p>Your cart is empty.</p>
+      ) : (
+        <>
+          <ul>
+            {cartItems.map((item) => (
+              <li key={item.recipe_id}>
+                {item.recipeTitle} x {item.quantity}
+              </li>
+            ))}
+          </ul>
+          <div style={{ margin: "10px 0" }}>
+            <label>Delivery Location: </label>
+            <input
+              type="text"
+              value={location}
+              onChange={(e) => setLocation(e.target.value)}
+            />
+          </div>
+          <button onClick={handlePlaceOrder}>Place Order</button>
+        </>
+      )}
+    </div>
+  );
 }

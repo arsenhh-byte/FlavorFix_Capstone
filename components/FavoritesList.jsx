@@ -2,21 +2,14 @@
 import React, { useState, useEffect } from "react";
 import styles from "../styles/favorites.module.css";
 import RecipeDetails from "./RecipeDetails";
-import { FaPlus, FaMinus } from "react-icons/fa";
-import { useRouter } from "next/router";
 import { useSession } from "next-auth/react";
 
 const FavoritesList = () => {
   const { data: session } = useSession();
-  const router = useRouter();
   const [favorites, setFavorites] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [selectedRecipe, setSelectedRecipe] = useState(null);
-  const [startIndex, setStartIndex] = useState(0);
-  const [endIndex, setEndIndex] = useState(2);
-  const [showPlusButton, setShowPlusButton] = useState(true);
-  const [showMinusButton, setShowMinusButton] = useState(false);
 
   useEffect(() => {
     const fetchFavorites = async () => {
@@ -33,7 +26,7 @@ const FavoritesList = () => {
         } else {
           setError("Failed to fetch favorites");
         }
-      } catch (error) {
+      } catch (err) {
         setError("Error fetching favorites");
       } finally {
         setLoading(false);
@@ -45,23 +38,21 @@ const FavoritesList = () => {
     }
   }, [session]);
 
-  const handleShowMore = () => {
-    if (endIndex + 1 >= favorites.length) return;
-    setStartIndex(endIndex + 1);
-    setEndIndex(endIndex + 3);
-    setShowPlusButton(false);
-    setShowMinusButton(true);
-  };
-
-  const handleShowPrevious = () => {
-    setEndIndex(startIndex - 1);
-    setStartIndex(startIndex - 3);
-    setShowPlusButton(true);
-    setShowMinusButton(startIndex > 3);
-  };
-
-  const handleCloseDetails = () => {
-    setSelectedRecipe(null);
+  const handleRemoveFavorite = async (recipe_id) => {
+    try {
+      const response = await fetch("/api/favorites", {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ recipe_id }),
+      });
+      if (response.ok) {
+        setFavorites((prev) => prev.filter((fav) => fav.recipe_id !== recipe_id));
+      } else {
+        console.error("Failed to remove favorite");
+      }
+    } catch (error) {
+      console.error("Error removing favorite:", error);
+    }
   };
 
   const handleCook = async (recipeId) => {
@@ -77,37 +68,57 @@ const FavoritesList = () => {
     }
   };
 
+  const handleCloseDetails = () => {
+    setSelectedRecipe(null);
+  };
+
   return (
-    <div className={styles.favoritesContainer}>
-      {loading && <p>Loading favorites...</p>}
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {favorites.length > 0 && (
-        <div className={styles.recipeListContainer}>
-          <div className={styles.recipeList}>
-            {favorites.slice(startIndex, endIndex + 1).map((favorite) => (
-              <div key={favorite.recipe_id} className={styles.recipeCard}>
-                <div className={styles.recipeDetails}>
-                  <h2 className={styles.recipeTitle}>{favorite.title}</h2>
-                  <img src={favorite.image} alt={favorite.title} className={styles.recipeImage} />
-                  <button onClick={() => handleCook(favorite.recipe_id)} className={styles.cookThisButton}>
+    <>
+      <div className={styles.sidebar}>
+        <h2 className={styles.header}>Favorites</h2>
+        {loading && <p className={styles.message}>Loading favorites...</p>}
+        {error && <p className={styles.message}>{error}</p>}
+        {favorites.length === 0 ? (
+          !loading && <p className={styles.message}>No favorites added yet.</p>
+        ) : (
+          <div className={styles.favoritesList}>
+            {favorites.map((fav) => (
+              <div key={fav.recipe_id} className={styles.favoriteCard}>
+                <h3 className={styles.recipeTitle}>{fav.title}</h3>
+                <img
+                  src={fav.image}
+                  alt={fav.title}
+                  className={styles.recipeImage}
+                />
+                <div className={styles.buttonRow}>
+                  <button
+                    onClick={() => handleCook(fav.recipe_id)}
+                    className={styles.cookThisButton}
+                  >
                     Cook this
+                  </button>
+                  <button
+                    onClick={() => handleRemoveFavorite(fav.recipe_id)}
+                    className={styles.removeButton}
+                  >
+                    Remove
                   </button>
                 </div>
               </div>
             ))}
           </div>
-          {showPlusButton && (
-            <FaPlus onClick={handleShowMore} className={styles.plusButton} />
-          )}
-          {showMinusButton && (
-            <FaMinus onClick={handleShowPrevious} className={styles.minusButton} />
-          )}
+        )}
+      </div>
+
+      {/* Modal for Recipe Details (centered in the page) */}
+      {selectedRecipe && (
+        <div className={styles.modalOverlay}>
+          <div className={styles.modalContent}>
+            <RecipeDetails recipe={selectedRecipe} onClose={handleCloseDetails} />
+          </div>
         </div>
       )}
-      {selectedRecipe && (
-        <RecipeDetails recipe={selectedRecipe} onClose={handleCloseDetails} />
-      )}
-    </div>
+    </>
   );
 };
 

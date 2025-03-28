@@ -2,7 +2,7 @@
 import dbConnect from '../../backend/config/db';
 import User from '../../backend/models/User';
 import { getServerSession } from 'next-auth/next';
-import { authOptions } from '../api/auth/[...nextauth]'; // Adjust path if needed
+import { authOptions } from '../api/auth/[...nextauth]';
 
 export default async function handler(req, res) {
   await dbConnect();
@@ -26,6 +26,8 @@ export default async function handler(req, res) {
         if (!user) {
           return res.status(404).json({ success: false, message: "User not found" });
         }
+        // Ensure favorites exists
+        if (!user.favorites) user.favorites = [];
         return res.status(200).json({ success: true, favorites: user.favorites });
       } catch (error) {
         console.error("Error fetching favorites:", error);
@@ -48,7 +50,12 @@ export default async function handler(req, res) {
           return res.status(404).json({ success: false, message: "User not found" });
         }
 
-        // Check if already favorited using .some() over the favorites array
+        // Ensure favorites is an array
+        if (!user.favorites) {
+          user.favorites = [];
+        }
+
+        // Check if already favorited
         const alreadyFavorited = user.favorites.some(
           (fav) => fav.recipe_id === recipe_id
         );
@@ -59,6 +66,7 @@ export default async function handler(req, res) {
           });
         }
 
+        // Add the new favorite and save
         user.favorites.push({ recipe_id, title, image });
         await user.save();
 
@@ -87,6 +95,12 @@ export default async function handler(req, res) {
           return res.status(404).json({ success: false, message: "User not found" });
         }
 
+        // Ensure favorites is an array before filtering
+        if (!user.favorites) {
+          user.favorites = [];
+        }
+
+        // Remove the favorite matching recipe_id
         user.favorites = user.favorites.filter(
           (fav) => fav.recipe_id !== recipe_id
         );

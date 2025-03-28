@@ -1,3 +1,4 @@
+// components/Header.jsx
 import Link from "next/link";
 import React, { useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
@@ -5,18 +6,19 @@ import { useRouter } from "next/router";
 import SearchBar from "./SearchBar";
 import FavoritesList from "./FavoritesList";
 import { useCart } from "../context/CartContext";
-import ChatAssistant from "./ChatAssistant"; // Import the chat assistant component
+import ChatAssistant from "./ChatAssistant";
 import styles from "../styles/favorites.module.css";
 
 const Header = ({ onSearch }) => {
   const { data: session } = useSession();
   const router = useRouter();
   const { cartItems } = useCart();
+  const isLandingPage = router.pathname === "/";
 
   const [showMenu, setShowMenu] = useState(false);
   const [showLoginForm, setShowLoginForm] = useState(false);
   const [showFavorites, setShowFavorites] = useState(false);
-  const [showChat, setShowChat] = useState(false); // State for chat modal
+  const [showChat, setShowChat] = useState(false);
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [loginError, setLoginError] = useState("");
@@ -29,19 +31,17 @@ const Header = ({ onSearch }) => {
   const toggleLoginForm = () => setShowLoginForm(!showLoginForm);
   const handleLogoClick = () => onSearch([""]);
 
+  // Remove redirect: false so NextAuth's redirect callback takes effect
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setLoginError("");
     const result = await signIn("credentials", {
-      redirect: false,
       email: loginEmail,
       password: loginPassword,
+      callbackUrl: "/", // This may be overridden by NextAuth if the user is a chef.
     });
     if (result.error) {
       setLoginError("Invalid credentials");
-    } else {
-      setShowLoginForm(false);
-      window.location.reload();
     }
   };
 
@@ -55,10 +55,7 @@ const Header = ({ onSearch }) => {
     setShowFavorites((prev) => !prev);
   };
 
-  // Toggle the chat modal
-  const handleChatToggle = () => {
-    setShowChat((prev) => !prev);
-  };
+  const handleChatToggle = () => setShowChat((prev) => !prev);
 
   return (
     <header className="header" style={{ backgroundImage: "url('/bg1.png')" }}>
@@ -66,16 +63,17 @@ const Header = ({ onSearch }) => {
         <label className="hamburger-menu" onClick={toggleMenu}>
           &#9776;
         </label>
-        <div
-          className={`header-buttons ${showMenu ? "header-buttons-active" : ""}`}
-          id="hamburger-buttons"
-        >
-          <button className="button-ind" onClick={scrollToAbout}>
-            About
-          </button>
-          <button className="button-ind" onClick={scrollToContact}>
-            Contact
-          </button>
+        <div className={`header-buttons ${showMenu ? "header-buttons-active" : ""}`} id="hamburger-buttons">
+          {isLandingPage && (
+            <>
+              <button className="button-ind" onClick={scrollToAbout}>
+                About
+              </button>
+              <button className="button-ind" onClick={scrollToContact}>
+                Contact
+              </button>
+            </>
+          )}
           {session ? (
             <button className="button-ind" onClick={handleLogout}>
               Log Out
@@ -85,13 +83,19 @@ const Header = ({ onSearch }) => {
               Log In
             </button>
           )}
-          <Link href="/cart" className="button-ind">
-            Cart ({cartItems.length})
-          </Link>
+          {/* Conditionally render Cart or Chef Dashboard link */}
+          {session && session.user && session.user.isChef ? (
+            <Link href="/chef/dashboard" className="button-ind">
+              Chef Dashboard
+            </Link>
+          ) : (
+            <Link href="/cart" className="button-ind">
+              Cart ({cartItems.length})
+            </Link>
+          )}
           <button onClick={handleFavoritesClick} className="button-ind">
             {showFavorites ? "Hide Favorites" : "My Favorites"}
           </button>
-          {/* Chat button */}
           <button className="button-ind" onClick={handleChatToggle}>
             Chat
           </button>
@@ -137,7 +141,9 @@ const Header = ({ onSearch }) => {
                 onChange={(e) => setLoginPassword(e.target.value)}
                 required
               />
-              {loginError && <p style={{ color: "red" }}>{loginError}</p>}
+              {loginError && (
+                <p style={{ color: "red", textAlign: "center" }}>{loginError}</p>
+              )}
               <button className="loginSubmit" type="submit">
                 Submit
               </button>
@@ -147,8 +153,6 @@ const Header = ({ onSearch }) => {
       )}
 
       {session && showFavorites && <FavoritesList />}
-
-      {/* Render ChatAssistant modal if showChat is true */}
       {showChat && <ChatAssistant onClose={handleChatToggle} />}
     </header>
   );

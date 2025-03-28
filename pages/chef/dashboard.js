@@ -4,17 +4,23 @@ import { useSession } from "next-auth/react";
 import styles from "../../styles/chefDashboard.module.css";
 
 export default function ChefDashboard() {
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
   const [orders, setOrders] = useState([]);
   const [error, setError] = useState("");
 
   useEffect(() => {
     const fetchChefOrders = async () => {
       if (!session) return;
+
+      // Log the session data for debugging
+      console.log("[ChefDashboard] session:", session);
+
       try {
-        // GET /api/orders => returns pending/accepted/cooking orders for a chef
         const res = await fetch("/api/orders", { method: "GET", cache: "no-store" });
         const data = await res.json();
+
+        console.log("[ChefDashboard] GET /api/orders response:", data);
+
         if (data.success) {
           setOrders(data.orders);
         } else {
@@ -22,13 +28,26 @@ export default function ChefDashboard() {
         }
       } catch (err) {
         setError("Error fetching orders");
-        console.error(err);
+        console.error("[ChefDashboard] Error fetching orders:", err);
       }
     };
-    if (session && session.user.isChef) {
+
+    // Only fetch if user is a chef
+    if (status === "authenticated" && session.user.isChef) {
       fetchChefOrders();
     }
-  }, [session]);
+  }, [session, status]);
+
+  // Debug: see if user is recognized as a chef
+  if (status === "loading") {
+    return <p className={styles.errorMessage}>Loading session...</p>;
+  }
+  if (!session) {
+    return <p className={styles.errorMessage}>Please log in as a chef.</p>;
+  }
+  if (!session.user.isChef) {
+    return <p className={styles.errorMessage}>You are not authorized to view this page.</p>;
+  }
 
   // Update order status
   const updateOrderStatus = async (orderId, status) => {
@@ -39,6 +58,8 @@ export default function ChefDashboard() {
         body: JSON.stringify({ orderId, status }),
       });
       const data = await res.json();
+      console.log("[ChefDashboard] PUT /api/orders response:", data);
+
       if (data.success) {
         setOrders((prev) =>
           prev.map((order) => (order._id === orderId ? data.order : order))
@@ -51,7 +72,6 @@ export default function ChefDashboard() {
     }
   };
 
-  // Toggle instructions display
   const toggleInstructions = (orderId) => {
     setOrders((prev) =>
       prev.map((order) => {
@@ -63,20 +83,13 @@ export default function ChefDashboard() {
     );
   };
 
-  // If not logged in or not a chef
-  if (!session) {
-    return <p className={styles.errorMessage}>Please log in as a chef.</p>;
-  }
-  if (!session.user.isChef) {
-    return <p className={styles.errorMessage}>You are not authorized to view this page.</p>;
-  }
-
   return (
-    // Wrap everything in a container that applies a background
     <div className={styles.chefDashboardBg}>
       <div className={styles.dashboardContainer}>
         <h1 className={styles.dashboardTitle}>Chef Dashboard</h1>
         <p className={styles.subtitle}>Manage Pending and Cooking Orders</p>
+          console.log("[ChefDashboard] session from useSession:", session);
+
 
         {error && <p className={styles.errorMessage}>{error}</p>}
 

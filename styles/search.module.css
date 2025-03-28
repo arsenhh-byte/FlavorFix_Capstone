@@ -1,8 +1,47 @@
+/* search.module.css */
 
+/* The main container for inputs and buttons in one line */
 .searchContainer {
   display: flex;
-  flex-flow: column;
+  flex-wrap: nowrap;
+  align-items: center;
+  gap: 10px; /* spacing between items */
+  margin-bottom: 10px; /* spacing under the search bar */
 }
+
+/* Center and style the error message at the top */
+.errorMessage {
+  text-align: center;
+  color: red;
+  font-weight: bold;
+  margin-bottom: 10px;
+  font-family: "Raleway", sans-serif;
+  font-size: 16px;
+}
+
+/* Remove or comment out any .buttonsContainer if not used
+.buttonsContainer {
+  position: absolute;
+  bottom: 20px;
+  left: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+@media only screen and (max-width: 768px) {
+  .buttonsContainer {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+}
+*/
+
+/* Keep your existing styles for searchButton, searchInput, etc. */
 
 .searchButton {
   font-family: "Raleway", sans-serif;
@@ -12,11 +51,9 @@
   border: 1px solid lightgrey;
   border-radius: 30px;
   padding: 10px 20px;
-  text-decoration: none;
   cursor: pointer;
   transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }
-
 
 .searchButton:hover {
   background-color: #4ecba2;
@@ -24,14 +61,13 @@
 }
 
 .searchInput {
-    font-family: "Raleway", sans-serif;
+  font-family: "Raleway", sans-serif;
   font-size: 14px;
   color: grey;
   background-color: white;
   border: 1px solid lightgrey;
   border-radius: 20px;
   padding: 10px 10px;
-  text-decoration: none;
   cursor: pointer;
   transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }
@@ -44,7 +80,6 @@
   border: 1px solid lightgrey;
   border-radius: 20px;
   padding: 10px 10px;
-  text-decoration: none;
   cursor: pointer;
   transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }
@@ -61,7 +96,6 @@
   border: 2px solid #4ecba2;
   border-radius: 30px;
   padding: 10px 20px;
-  text-decoration: none;
   cursor: pointer;
   transition: background-color 0.2s, color 0.2s, border-color 0.2s;
 }
@@ -69,26 +103,4 @@
 .cookNowButton:hover {
   background-color: #4ecba2;
   color: white;
-}
-
-/* Positioning for buttons */
-.buttonsContainer {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-@media only screen and (max-width: 768px) {
-  .buttonsContainer {
-    position: fixed;
-    bottom: 20px;
-    left: 50%;
-    transform: translateX(-50%);
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
 }

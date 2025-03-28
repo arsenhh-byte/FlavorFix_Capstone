@@ -1,153 +1,124 @@
-.favoritesContainer {
-  position: absolute;
-  text-align: center;
-  left: 80%;
-  top: 10%;
-  margin-top: 20px;
-  padding: 20px;
-  width: 13%;
-  background-color: white;
-  border: 1px solid #4ecba2;
-  border-radius: 8px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 9999;
-}
+/* styles/favorite.module.css */
 
-.myFavoritesButton {
-  font-family: "Raleway", sans-serif;
-  font-size: 16px;
-  color: white;
-  background-color: #4ecba2;
-  border: 1px solid lightgrey;
-  border-radius: 100px;
-  padding: 5px;
-  text-decoration: none;
-  cursor: pointer;
-  transition:
-    background-color 0.2s,
-    color 0.2s,
-    border-color 0.2s;
-}
-
-/* Hover effect */
-.myFavoritesButton:hover {
-  color: black;
-}
-
-/* Active state */
-.myFavoritesButton:active {
-  transform: translateY(1px);
-}
-
-.plusButton {
-  background-color: #4ecba2;
-  color: #fff;
-  border: none;
-  font-size: 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  top: 10px;
-  padding: 5px;
-}
-
-.plusButton:hover {
-  background-color: #36a380;
-}
-
-.minusButton {
-  background-color: #4ecba2;
-  color: #fff;
-  border: none;
-  font-size: 20px;
-  border-radius: 4px;
-  cursor: pointer;
-  top: 10px;
-  padding: 5px;
-}
-
-.minusButton:hover {
-  background-color: #36a380;
-}
-
-
-
-.cookThisButton {
-  font-family: "Raleway", sans-serif;
-  font-size: 12px;
-  margin-top: 20px;
-  color: #ffffff;
-  background-color: #4ecba2;
-  border: 2px solid #4ecba2;
-  border-radius: 20px;
-  padding: 10px;
-  text-decoration: none;
-}
-
-.cookThisButton:hover {
-  cursor: pointer;
-  color: #fcd8c5;
-}
-
-.recipeListContainer {
-  margin-top: 5px;
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: space-between;
-}
-
-.recipeDetails {
-  background-color: #fff;
-  border: 2px solid #ccc;
-  border-radius: 8px;
-  padding: 10px;
-  max-width: 590px;
-  margin: 10px;
-}
-
-.recipeImage {
-  width: 96%;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-.recipeName {
-  font-family: "Raleway", sans-serif;
-  font-weight: 400;
-  font-size: 16px;
-  color: black;
-}
-
-.recipeTitle {
-  font-family: "Palatino", serif;
-  font-weight: bold;
-  font-size: 24px;
-}
-
-.recipeCard h2 {
-  font-family: "Palatino", serif;
-  font-weight: bold;
-  font-size: 24px;
-  color: black;
-}
-
-.recipeCard img {
-  width: 100%; 
-  max-width: 100%;
-  border-radius: 8px;
-  margin-bottom: 20px;
-}
-
-
-
-@media only screen and (max-width: 768px) {
-  .cookThisButton {
-    margin-top: 10px;
+/* The sidebar is fixed to the right, but only as tall as its contents, 
+   up to 90% of the viewport height. */
+   .sidebar {
+    position: absolute;
+    top: 20px;         /* Some space from the top */
+    right: 30px;       /* Some space from the right edge */
+    max-height: 90vh;  /* Up to 90% of the viewport height */
+    width: 220px;      /* Narrow sidebar */
+    background-color: #fff;
+    border: 2px solid #ccc;
+    border-radius: 8px;
+    padding: 15px;
+    overflow-y: auto;  /* Scroll only if needed */
+    box-shadow: -2px 2px 8px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
   }
   
-  .favoritesContainer {
-    width: 80%;
-    padding: 15px;
-    top: 50%;
-    left: 50%;
+  .header {
+    text-align: center;
+    font-size: 20px;
+    margin-bottom: 20px;
+    color: #4ecba2;
+    font-weight: bold;
   }
-}
+  
+  .message {
+    text-align: center;
+    font-size: 16px;
+    color: #777;
+    margin: 10px 0;
+  }
+  
+  /* The list of favorite items */
+  .favoritesList {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  /* Each favorite card */
+  .favoriteCard {
+    border: 1px solid #eee;
+    padding: 10px;
+    border-radius: 8px;
+    text-align: center;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+  }
+  
+  .recipeTitle {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 10px;
+  }
+  
+  .recipeImage {
+    width: 100%;
+    height: 100px;
+    object-fit: cover;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  
+  .buttonRow {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+  }
+  
+  .cookThisButton {
+    background-color: #4ecba2;
+    color: #fff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.2s ease;
+  }
+  
+  .cookThisButton:hover {
+    background-color: #36a380;
+  }
+  
+  .removeButton {
+    background-color: #ff5252;
+    color: #fff;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    transition: background-color 0.2s ease;
+  }
+  
+  .removeButton:hover {
+    background-color: #ff1744;
+  }
+  
+  /* Modal overlay for the RecipeDetails component */
+  .modalOverlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 1500;
+  }
+  
+  .modalContent {
+    background: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 800px;
+    width: 90%;
+    max-height: 90%;
+    overflow-y: auto;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  }

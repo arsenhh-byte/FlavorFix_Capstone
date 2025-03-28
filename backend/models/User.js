@@ -14,7 +14,8 @@ const userSchema = new mongoose.Schema({
       image: { type: String } // not strictly required
       // You can add more fields if needed, e.g. ingredients, instructions, etc.
     }
-  ]
+  ],
+  default: []
 });
 
 // If a User model already exists, use it; otherwise create a new one

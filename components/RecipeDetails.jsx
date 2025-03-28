@@ -1,12 +1,13 @@
 // components/RecipeDetails.jsx
 import React, { useState, useEffect } from "react";
-import styles from "../styles/details.module.css";
+import { useRouter } from "next/router";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { PiCookingPotFill } from "react-icons/pi";
-import { FaClock, FaListOl, FaUserTie } from "react-icons/fa";
+import { FaClock, FaListOl } from "react-icons/fa";
+import { GiChefToque } from "react-icons/gi"; // Chef icon from react-icons
 import { useAuth } from "../AuthContext"; // or useSession from next-auth/react
-import { useRouter } from "next/router";
+import styles from "../styles/details.module.css";
 
 const RecipeDetails = ({ recipe, onClose }) => {
   const router = useRouter();
@@ -19,7 +20,7 @@ const RecipeDetails = ({ recipe, onClose }) => {
   const [message, setMessage] = useState("");
   const [orderMessage, setOrderMessage] = useState("");
 
-  // Check if the recipe is already favorited
+  // Check if the recipe is already favorited when component mounts or user changes
   useEffect(() => {
     if (user && user.favorites) {
       const alreadyFav = user.favorites.some((fav) => fav.recipe_id === id);
@@ -30,13 +31,48 @@ const RecipeDetails = ({ recipe, onClose }) => {
   }, [user, id]);
 
   const toggleFavorite = async () => {
-    // Your add/remove favorite logic goes here.
-    setMessage("Favorite functionality not implemented yet.");
+    if (!user) {
+      setMessage("Please log in to favorite a recipe.");
+      return;
+    }
+    try {
+      if (!isFavorited) {
+        // Call the API to add favorite
+        const response = await fetch("/api/favorites", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            recipe_id: id,
+            title,
+            image,
+          }),
+        });
+        if (response.ok) {
+          setIsFavorited(true);
+          setMessage("Recipe favorited successfully!");
+        } else {
+          setMessage("Failed to add favorite.");
+        }
+      } else {
+        // Call the API to remove favorite
+        const response = await fetch("/api/favorites", {
+          method: "DELETE",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ recipe_id: id }),
+        });
+        if (response.ok) {
+          setIsFavorited(false);
+          setMessage("Favorite removed successfully!");
+        } else {
+          setMessage("Failed to remove favorite.");
+        }
+      }
+    } catch (error) {
+      console.error("Error toggling favorite:", error);
+      setMessage("An error occurred.");
+    }
   };
 
-  // When "Request Chef" is clicked, save the pending recipe and navigate to /choose-chef.
-  // On the choose-chef page, you will read this pending recipe from localStorage,
-  // then when the user selects a chef, add the combined data to the cart.
   const handleRequestChef = async () => {
     if (!user) {
       alert("Please log in to request a chef");
@@ -51,69 +87,45 @@ const RecipeDetails = ({ recipe, onClose }) => {
     }
   };
 
-  const toggleInstructions = () => setShowInstructions(!showInstructions);
-  const toggleIngredients = () => setShowIngredients(!showIngredients);
+  const toggleInstructions = () => setShowInstructions((prev) => !prev);
+  const toggleIngredients = () => setShowIngredients((prev) => !prev);
 
   return (
-    <div>
-      {/* Recipe Details Section */}
-      <div className={styles.recipeDetails}>
-        <button onClick={onClose} className={styles.closeButton}>
-          Close
-        </button>
-        <button onClick={toggleFavorite} className={styles.heartButton}>
-          <FontAwesomeIcon icon={faHeart} style={{ color: isFavorited ? "red" : "grey" }} />
-        </button>
-        <p>{message}</p>
-        <h2 className={styles.recipeTitle}>{title}</h2>
-        <img src={image} alt={title} className={styles.recipeImage} />
-        <div className={styles.recipeInfo}>
-          <div style={{ display: "flex", alignItems: "center" }}>
-            <FaClock
-              className={styles.timeButton}
-              style={{ cursor: "pointer", fontSize: "30px", color: "black" }}
-            />
-            <p style={{ marginLeft: "10px" }}>
-              Ready in {readyInMinutes} minutes
-            </p>
-          </div>
+    <div className={styles.recipeDetails}>
+      {/* Top Buttons */}
+      <button onClick={onClose} className={styles.closeButton}>X</button>
+      <button
+        onClick={toggleFavorite}
+        className={`${styles.heartButton} ${isFavorited ? styles.favorited : ""}`}
+      >
+        <FontAwesomeIcon icon={faHeart} style={{ color: isFavorited ? "red" : "grey" }} />
+      </button>
+      {message && <p className={styles.message}>{message}</p>}
+      
+      <h2 className={styles.recipeTitle}>{title}</h2>
+      <img src={image} alt={title} className={styles.recipeImage} />
+      <div className={styles.recipeInfo}>
+        <div className={styles.timeContainer}>
+          <FaClock className={styles.timeButton} />
+          <p>Ready in {readyInMinutes} minutes</p>
         </div>
       </div>
 
-      <p style={{ color: "green" }}>{orderMessage}</p>
+      {orderMessage && <p className={styles.orderMessage}>{orderMessage}</p>}
 
-      {/* Request Chef Section inside a white container */}
+      {/* Request Chef Section */}
       <div className={styles.requestChefContainer}>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <FaUserTie
-            onClick={handleRequestChef}
-            className={styles.ingreButton} 
-            style={{ cursor: "pointer", fontSize: "30px", color: "black" }}
-          />
-          <span
-            className={styles.requestChefText}
-            style={{ marginLeft: "5px", cursor: "pointer" }}
-            onClick={handleRequestChef}
-          >
-            Request Chef
-          </span>
+        <div className={styles.requestChefInner} onClick={handleRequestChef}>
+          <GiChefToque className={styles.chefIcon} />
+          <span className={styles.requestChefText}>Request Chef</span>
         </div>
       </div>
 
-      {/* Show Ingredients Section */}
+      {/* Ingredients Section */}
       <div className={styles.ingredientsContainer}>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <FaListOl
-            onClick={toggleIngredients}
-            className={styles.ingreButton}
-            style={{ cursor: "pointer", fontSize: "30px", color: "black" }}
-          />
-          <span
-            style={{ marginLeft: "5px", cursor: "pointer" }}
-            onClick={toggleIngredients}
-          >
-            {showIngredients ? "Hide Ingredients" : "Show Ingredients"}
-          </span>
+        <div className={styles.toggleContainer} onClick={toggleIngredients}>
+          <FaListOl className={styles.toggleIcon} />
+          <span>{showIngredients ? "Hide Ingredients" : "Show Ingredients"}</span>
         </div>
         {showIngredients && (
           <div className={styles.ingredientsContent}>
@@ -128,17 +140,11 @@ const RecipeDetails = ({ recipe, onClose }) => {
         )}
       </div>
 
-      {/* Show Instructions Section */}
+      {/* Instructions Section */}
       <div className={styles.instructionsContainer}>
-        <div style={{ display: "flex", alignItems: "center" }}>
-          <PiCookingPotFill
-            onClick={toggleInstructions}
-            className={styles.instrucButton}
-            style={{ cursor: "pointer", fontSize: "30px", color: "black" }}
-          />
-          <span style={{ marginLeft: "5px", cursor: "pointer" }} onClick={toggleInstructions}>
-            {showInstructions ? "Hide Instructions" : "Show Instructions"}
-          </span>
+        <div className={styles.toggleContainer} onClick={toggleInstructions}>
+          <PiCookingPotFill className={styles.toggleIcon} />
+          <span>{showInstructions ? "Hide Instructions" : "Show Instructions"}</span>
         </div>
         {showInstructions && (
           <div className={styles.instructionsContent}>

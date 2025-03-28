@@ -13,37 +13,29 @@ const ChatAssistant = ({ onClose }) => {
     e.preventDefault();
     if (!input.trim()) return;
 
-    // Add user message
     const userMessage = { role: "user", content: input.trim() };
-    const newConversation = [...messages, userMessage];
-    setMessages(newConversation);
+    const conversation = [...messages, userMessage];
+    setMessages(conversation);
     setInput("");
     setLoading(true);
 
     try {
-      // POST the entire conversation
       const response = await fetch("/api/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ conversation: newConversation }),
+        body: JSON.stringify({ conversation }),
       });
-
       if (!response.ok) {
         throw new Error("Chat API error");
       }
-
-      // Log the returned JSON for debugging
       const data = await response.json();
-      console.log("Chat API data:", data);
-
-      // data.reply is the text we returned from /api/chat
       const assistantMessage = { role: "assistant", content: data.reply };
       setMessages((prev) => [...prev, assistantMessage]);
     } catch (error) {
       console.error(error);
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: "Sorry, something went wrong with the AIML API." },
+        { role: "assistant", content: "Sorry, something went wrong with the chat service." },
       ]);
     } finally {
       setLoading(false);

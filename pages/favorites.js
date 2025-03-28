@@ -1,54 +1,126 @@
-// pages/favorites.js
-import React, { useState, useEffect } from "react";
-import { useSession } from "next-auth/react";
+// pages/api/favorites.js
+import dbConnect from '../../backend/config/db';
+import User from '../../backend/models/User';
+import { getServerSession } from 'next-auth/next';
+import { authOptions } from '../api/auth/[...nextauth]'; // Adjust path if needed
 
-export default function FavoritesPage() {
-  const { data: session, status } = useSession();
-  const [favorites, setFavorites] = useState([]);
-  const [error, setError] = useState(null);
+export default async function handler(req, res) {
+  // Connect to the database
+  await dbConnect();
 
-  useEffect(() => {
-    // Only fetch if we have a valid session
-    if (status === "authenticated") {
-      fetch("/api/favorites")
-        .then((res) => res.json())
-        .then((data) => {
-          if (data.success) {
-            setFavorites(data.favorites);
-          } else {
-            setError(data.message);
-          }
-        })
-        .catch((err) => {
-          setError(err.message);
-        });
+  // Retrieve the session using NextAuth
+  const session = await getServerSession(req, res, authOptions);
+  if (!session || !session.user) {
+    return res.status(401).json({
+      success: false,
+      message: "You must be logged in to access favorites."
+    });
+  }
+
+  // Use the user's email from the session for lookup
+  const email = session.user.email;
+
+  switch (req.method) {
+    case 'GET': {
+      try {
+        const user = await User.findOne({ email });
+        if (!user) {
+          return res.status(404).json({ success: false, message: "User not found" });
+        }
+        // Ensure favorites exists
+        if (!user.favorites) user.favorites = [];
+        return res.status(200).json({ success: true, favorites: user.favorites });
+      } catch (error) {
+        console.error("Error fetching favorites:", error);
+        return res.status(500).json({ success: false, message: "Server error" });
+      }
     }
-  }, [status]);
 
-  if (status === "loading") {
-    return <p>Loading...</p>;
+    case 'POST': {
+      try {
+        const { recipe_id, title, image } = req.body;
+        if (!recipe_id || !title) {
+          return res.status(400).json({
+            success: false,
+            message: "Missing required fields: recipe_id and title are required"
+          });
+        }
+
+        const user = await User.findOne({ email });
+        if (!user) {
+          return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        // Ensure favorites is an array
+        if (!user.favorites) {
+          user.favorites = [];
+        }
+
+        // Check if already favorited using .some() over the favorites array
+        const alreadyFavorited = user.favorites.some(
+          (fav) => fav.recipe_id === recipe_id
+        );
+        if (alreadyFavorited) {
+          return res.status(400).json({
+            success: false,
+            message: "Recipe already in favorites"
+          });
+        }
+
+        // Add the new favorite to the user's favorites array
+        user.favorites.push({ recipe_id, title, image });
+        await user.save();
+
+        return res.status(200).json({
+          success: true,
+          message: "Favorite added successfully!"
+        });
+      } catch (error) {
+        console.error("Error adding favorite:", error);
+        return res.status(500).json({ success: false, message: "Server error" });
+      }
+    }
+
+    case 'DELETE': {
+      try {
+        const { recipe_id } = req.body;
+        if (!recipe_id) {
+          return res.status(400).json({
+            success: false,
+            message: "recipe_id is required to remove a favorite"
+          });
+        }
+
+        const user = await User.findOne({ email });
+        if (!user) {
+          return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        // Ensure favorites is an array before filtering
+        if (!user.favorites) {
+          user.favorites = [];
+        }
+
+        // Remove the favorite matching recipe_id
+        user.favorites = user.favorites.filter(
+          (fav) => fav.recipe_id !== recipe_id
+        );
+        await user.save();
+
+        return res.status(200).json({
+          success: true,
+          message: "Favorite removed successfully!"
+        });
+      } catch (error) {
+        console.error("Error removing favorite:", error);
+        return res.status(500).json({ success: false, message: "Server error" });
+      }
+    }
+
+    default:
+      return res.status(405).json({
+        success: false,
+        message: "Method not allowed"
+      });
   }
-
-  if (!session) {
-    return <p>Please log in to view your favorites.</p>;
-  }
-
-  return (
-    <div style={{ padding: "20px" }}>
-      <h1>My Favorites</h1>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {favorites?.length > 0 ? (
-        <ul>
-          {favorites.map((fav) => (
-            <li key={fav.recipe_id}>
-              <h3>{fav.title}</h3>
-              <img src={fav.image} alt={fav.title} width="100" />
-            </li>
-          ))}
-        </ul>
-      ) : (
-        <p>No favorites yet.</p>
-      )}
-    </div>
-  );
 }

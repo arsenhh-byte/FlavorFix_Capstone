@@ -1,157 +1,136 @@
 /* styles/cart.module.css */
-
 .cartContainer {
-    max-width: 800px;
-    margin: 40px auto;
-    padding: 20px;
-    font-family: "Helvetica Neue", Arial, sans-serif;
-    color: #333;
-    background-color: #fff;
-    border: 2px solid #eee;
-    border-radius: 8px;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-  
-  .cartContainer h1 {
-    text-align: center;
-    margin-bottom: 20px;
-    font-size: 2rem;
-  }
-  
-  .emptyMessage {
-    text-align: center;
-    color: #777;
-    font-size: 18px;
-  }
-  
-  .cartList {
-    list-style: none;
-    padding: 0;
-    margin: 20px 0;
-  }
-  
-  .cartItem {
-    display: flex;
-    align-items: center;
-    border-bottom: 1px solid #ddd;
-    padding: 10px 0;
-  }
-  
-  .cartItem:last-child {
-    border-bottom: none;
-  }
-  
-  .itemImage {
-    width: 70px;
-    height: 70px;
-    object-fit: cover;
-    border-radius: 4px;
-    margin-right: 15px;
-  }
-  
-  .itemDetails {
-    flex-grow: 1;
-  }
-  
-  .itemDetails h3 {
-    margin: 0 0 5px;
-    font-size: 16px;
-    color: #333;
-  }
-  
-  .itemDetails p {
-    margin: 2px 0;
-    font-size: 13px;
-    color: #555;
-  }
-  
-  .deliveryAddress {
-    font-size: 13px;
-    color: #444;
-    margin-top: 4px;
-  }
-  
-  .quantityControls {
-    display: flex;
-    align-items: center;
-    margin-top: 8px;
-  }
-  
-  .qtyButton {
-    background-color: #f1f1f1;
-    color: #333;
-    border: none;
-    padding: 4px 8px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 14px;
-    margin-right: 6px;
-  }
-  
-  .qtyButton:hover {
-    background-color: #e0e0e0;
-  }
-  
-  .qtyValue {
-    font-size: 14px;
-    margin-right: 6px;
-    min-width: 20px;
-    text-align: center;
-    display: inline-block;
-  }
-  
-  .removeButton {
-    background-color: #ff5252;
-    color: #fff;
-    border: none;
-    padding: 4px 8px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-  }
-  
-  .removeButton:hover {
-    background-color: #ff1744;
-  }
-  
-  .cartFooter {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 20px;
-    flex-wrap: wrap;
-  }
-  
-  .totalItems {
-    font-size: 1rem;
-    margin-bottom: 10px;
-  }
-  
-  .clearButton {
-    background-color: #f44336;
-    color: #fff;
-    border: none;
-    padding: 6px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-    margin-right: 10px;
-  }
-  
-  .clearButton:hover {
-    background-color: #d32f2f;
-  }
-  
-  .checkoutButton {
-    background-color: #4caf50;
-    color: #fff;
-    border: none;
-    padding: 6px 10px;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 12px;
-  }
-  
-  .checkoutButton:hover {
-    background-color: #388e3c;
-  }
+  max-width: 800px;
+  margin: 40px auto;
+  padding: 20px;
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  color: #333;
+  background-color: #fff;
+  border: 2px solid #eee;
+  border-radius: 8px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+}
+
+.cartContainer h1 {
+  text-align: center;
+  margin-bottom: 20px;
+  font-size: 2rem;
+}
+
+.emptyMessage {
+  text-align: center;
+  color: #777;
+  font-size: 18px;
+  margin-top: 20px;
+}
+
+.cartList {
+  list-style: none;
+  padding: 0;
+  margin: 20px 0;
+}
+
+.cartItem {
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid #ddd;
+  padding: 10px 0;
+}
+
+.cartItem:last-child {
+  border-bottom: none;
+}
+
+.itemImage {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: 4px;
+  margin-right: 15px;
+}
+
+.itemDetails {
+  flex-grow: 1;
+}
+
+.itemDetails h3 {
+  margin: 0 0 5px;
+  font-size: 16px;
+  color: #333;
+}
+
+.itemDetails p {
+  margin: 2px 0;
+  font-size: 14px;
+  color: #555;
+}
+
+.deliveryAddress {
+  font-size: 14px;
+  color: #444;
+  margin-top: 4px;
+}
+
+.quantityControls {
+  display: flex;
+  align-items: center;
+  margin-top: 8px;
+}
+
+.qtyButton {
+  background-color: #f1f1f1;
+  color: #333;
+  border: none;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  margin-right: 6px;
+}
+
+.qtyButton:hover {
+  background-color: #e0e0e0;
+}
+
+.qtyValue {
+  font-size: 14px;
+  margin-right: 6px;
+  min-width: 20px;
+  text-align: center;
+  display: inline-block;
+}
+
+.cartFooter {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 20px;
+  flex-wrap: wrap;
+}
+
+.totalItems {
+  font-size: 1rem;
+  margin-bottom: 10px;
+}
+
+.checkoutButton {
+  background-color: #4caf50;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+}
+
+.checkoutButton:hover {
+  background-color: #388e3c;
+}
+
+.orderStatus {
+  text-align: center;
+  margin: 20px 0;
+  font-size: 18px;
+  color: #4ecba2;
+}
