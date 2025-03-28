@@ -1,42 +1,48 @@
 // pages/_app.js
 import React, { useEffect } from "react";
-import { useRouter } from "next/router";
+import Script from "next/script";
 import "../styles/global.css";
 import Header from "../components/Header";
 import { AuthProvider } from "../AuthContext";
-import { SessionProvider, useSession } from "next-auth/react";
+import { SessionProvider } from "next-auth/react";
 import { CartProvider } from "../context/CartContext";
+import { AnimatePresence, motion } from "framer-motion";
+import { useRouter } from "next/router";
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }) {
-  return (
-    <SessionProvider session={session}>
-      <AuthProvider>
-        <CartProvider>
-          {/* Redirect chef users from the homepage */}
-          <RedirectIfChef />
-          <Header />
-          <Component {...pageProps} />
-        </CartProvider>
-      </AuthProvider>
-    </SessionProvider>
-  );
-}
+  const router = useRouter();
 
-function RedirectIfChef() {
-  const router = useRouter();
-  const { data: session, status } = useSession();
+  useEffect(() => {
+    console.log("App Component Mounted");
+  }, []);
 
-  useEffect(() => {
-    // Wait until session is loaded
-    if (status === "loading") return;
-
-    // Only redirect if on the homepage and the user is a chef
-    if (router.pathname === "/" && session?.user?.isChef) {
-      router.push("/chef/dashboard");
-    }
-  }, [router, session, status]);
-
-  return null;
+  return (
+    <>
+      {/* Load Google Maps API with Places library using API key from .env */}
+      <Script
+        src={`https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`}
+        strategy="beforeInteractive"
+      />
+      <SessionProvider session={session}>
+        <AuthProvider>
+          <CartProvider>
+            <Header />
+            <AnimatePresence exitBeforeEnter>
+              <motion.div
+                key={router.route}
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -50 }}
+                transition={{ duration: 0.3 }}
+              >
+                <Component {...pageProps} />
+              </motion.div>
+            </AnimatePresence>
+          </CartProvider>
+        </AuthProvider>
+      </SessionProvider>
+    </>
+  );
 }
 
 export default MyApp;

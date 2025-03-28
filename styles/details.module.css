@@ -99,7 +99,7 @@
   margin: 0 auto;
 }
 
-/* New container for "Request Chef" */
+/* New white container for "Request Chef" */
 .requestChefContainer {
   background-color: #fff;
   border: 2px solid #ccc;
@@ -109,7 +109,14 @@
   margin: 10px auto;
 }
 
-/* Button styles for icons (shared by ingredients, instructions, etc.) */
+/* Optional dedicated styling for the Request Chef text */
+.requestChefText {
+  font-size: 16px;
+  color: #000;
+  cursor: pointer;
+}
+
+/* Teal button styling for icons (shared by ingredients/instructions) */
 .ingreButton {
   background-color: #4ecba2;
   color: #fff;
@@ -136,30 +143,6 @@
 }
 
 .instrucButton:hover {
-  background-color: #36a380;
-}
-
-/* New class for "Request Chef" text if needed */
-.requestChefText {
-  font-size: 16px;
-  color: #000;
-  cursor: pointer;
-}
-
-/* If you still want the .cookThisButton class (for a normal button style) */
-.cookThisButton {
-  background-color: #4ecba2;
-  color: #fff;
-  border: none;
-  font-size: 30px;
-  border-radius: 4px;
-  cursor: pointer;
-  padding: 5px;
-  margin-top: 10px;
-  display: inline-block;
-}
-
-.cookThisButton:hover {
   background-color: #36a380;
 }
 

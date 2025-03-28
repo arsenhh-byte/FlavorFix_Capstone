@@ -1,21 +1,22 @@
-// components/Header.jsx
 import Link from "next/link";
 import React, { useState } from "react";
 import { signIn, signOut, useSession } from "next-auth/react";
 import { useRouter } from "next/router";
 import SearchBar from "./SearchBar";
 import FavoritesList from "./FavoritesList";
-import { useCart } from "../context/CartContext"; // import cart context
+import { useCart } from "../context/CartContext";
+import ChatAssistant from "./ChatAssistant"; // Import the chat assistant component
 import styles from "../styles/favorites.module.css";
 
 const Header = ({ onSearch }) => {
   const { data: session } = useSession();
   const router = useRouter();
-  const { cartItems } = useCart(); // get cart items
+  const { cartItems } = useCart();
 
   const [showMenu, setShowMenu] = useState(false);
   const [showLoginForm, setShowLoginForm] = useState(false);
   const [showFavorites, setShowFavorites] = useState(false);
+  const [showChat, setShowChat] = useState(false); // State for chat modal
   const [loginEmail, setLoginEmail] = useState("");
   const [loginPassword, setLoginPassword] = useState("");
   const [loginError, setLoginError] = useState("");
@@ -28,17 +29,14 @@ const Header = ({ onSearch }) => {
   const toggleLoginForm = () => setShowLoginForm(!showLoginForm);
   const handleLogoClick = () => onSearch([""]);
 
-  // Handle login using NextAuth's signIn
   const handleLoginSubmit = async (e) => {
     e.preventDefault();
     setLoginError("");
-
     const result = await signIn("credentials", {
       redirect: false,
       email: loginEmail,
       password: loginPassword,
     });
-    console.log("signIn result:", result);
     if (result.error) {
       setLoginError("Invalid credentials");
     } else {
@@ -47,7 +45,6 @@ const Header = ({ onSearch }) => {
     }
   };
 
-  // Handle logout using NextAuth's signOut
   const handleLogout = () => signOut();
 
   const handleFavoritesClick = () => {
@@ -56,6 +53,11 @@ const Header = ({ onSearch }) => {
       return;
     }
     setShowFavorites((prev) => !prev);
+  };
+
+  // Toggle the chat modal
+  const handleChatToggle = () => {
+    setShowChat((prev) => !prev);
   };
 
   return (
@@ -83,12 +85,15 @@ const Header = ({ onSearch }) => {
               Log In
             </button>
           )}
-          {/* Updated Link usage */}
           <Link href="/cart" className="button-ind">
             Cart ({cartItems.length})
           </Link>
           <button onClick={handleFavoritesClick} className="button-ind">
             {showFavorites ? "Hide Favorites" : "My Favorites"}
+          </button>
+          {/* Chat button */}
+          <button className="button-ind" onClick={handleChatToggle}>
+            Chat
           </button>
         </div>
       </div>
@@ -142,6 +147,9 @@ const Header = ({ onSearch }) => {
       )}
 
       {session && showFavorites && <FavoritesList />}
+
+      {/* Render ChatAssistant modal if showChat is true */}
+      {showChat && <ChatAssistant onClose={handleChatToggle} />}
     </header>
   );
 };

@@ -5,12 +5,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faHeart } from "@fortawesome/free-solid-svg-icons";
 import { PiCookingPotFill } from "react-icons/pi";
 import { FaClock, FaListOl, FaUserTie } from "react-icons/fa";
-import { useAuth } from "../AuthContext"; // or useSession from next-auth/react if applicable
+import { useAuth } from "../AuthContext"; // or useSession from next-auth/react
 import { useRouter } from "next/router";
 
 const RecipeDetails = ({ recipe, onClose }) => {
   const router = useRouter();
-  const { user } = useAuth(); // or useSession from next-auth/react
+  const { user } = useAuth();
   const { image, title, readyInMinutes, instructions, extendedIngredients, id } = recipe;
 
   const [isFavorited, setIsFavorited] = useState(false);
@@ -19,6 +19,7 @@ const RecipeDetails = ({ recipe, onClose }) => {
   const [message, setMessage] = useState("");
   const [orderMessage, setOrderMessage] = useState("");
 
+  // Check if the recipe is already favorited
   useEffect(() => {
     if (user && user.favorites) {
       const alreadyFav = user.favorites.some((fav) => fav.recipe_id === id);
@@ -29,18 +30,19 @@ const RecipeDetails = ({ recipe, onClose }) => {
   }, [user, id]);
 
   const toggleFavorite = async () => {
-    // your add/remove favorite logic
+    // Your add/remove favorite logic goes here.
+    setMessage("Favorite functionality not implemented yet.");
   };
 
-  // When Request Chef is clicked, store the pending recipe and navigate to choose-chef page
+  // When "Request Chef" is clicked, save the pending recipe and navigate to /choose-chef.
+  // On the choose-chef page, you will read this pending recipe from localStorage,
+  // then when the user selects a chef, add the combined data to the cart.
   const handleRequestChef = async () => {
     if (!user) {
       alert("Please log in to request a chef");
       return;
     }
     try {
-      // Optionally, you could create an order in your database here.
-      // For now, we simply store the recipe in localStorage.
       localStorage.setItem("pendingRecipe", JSON.stringify(recipe));
       router.push("/choose-chef");
     } catch (error) {
@@ -60,10 +62,7 @@ const RecipeDetails = ({ recipe, onClose }) => {
           Close
         </button>
         <button onClick={toggleFavorite} className={styles.heartButton}>
-          <FontAwesomeIcon
-            icon={faHeart}
-            style={{ color: isFavorited ? "red" : "grey" }}
-          />
+          <FontAwesomeIcon icon={faHeart} style={{ color: isFavorited ? "red" : "grey" }} />
         </button>
         <p>{message}</p>
         <h2 className={styles.recipeTitle}>{title}</h2>
@@ -83,12 +82,12 @@ const RecipeDetails = ({ recipe, onClose }) => {
 
       <p style={{ color: "green" }}>{orderMessage}</p>
 
-      {/* Request Chef Section (White container) */}
+      {/* Request Chef Section inside a white container */}
       <div className={styles.requestChefContainer}>
         <div style={{ display: "flex", alignItems: "center" }}>
           <FaUserTie
             onClick={handleRequestChef}
-            className={styles.ingreButton} // use the same teal icon style
+            className={styles.ingreButton} 
             style={{ cursor: "pointer", fontSize: "30px", color: "black" }}
           />
           <span
@@ -137,10 +136,7 @@ const RecipeDetails = ({ recipe, onClose }) => {
             className={styles.instrucButton}
             style={{ cursor: "pointer", fontSize: "30px", color: "black" }}
           />
-          <span
-            style={{ marginLeft: "5px", cursor: "pointer" }}
-            onClick={toggleInstructions}
-          >
+          <span style={{ marginLeft: "5px", cursor: "pointer" }} onClick={toggleInstructions}>
             {showInstructions ? "Hide Instructions" : "Show Instructions"}
           </span>
         </div>
