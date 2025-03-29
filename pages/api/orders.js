@@ -1,70 +1,77 @@
 // pages/api/orders.js
 import dbConnect from "../../backend/config/db";
 import Order from "../../backend/models/Order";
+import User from "../../backend/models/User"; // Import User for fallback lookup
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "./auth/[...nextauth]";
+import { authOptions } from "./auth/[...nextauth]"; // Adjust path if needed
 
 export default async function handler(req, res) {
   await dbConnect();
 
+  // Retrieve the session using NextAuth
   const session = await getServerSession(req, res, authOptions);
   if (!session || !session.user) {
     return res.status(401).json({ success: false, message: "Not authenticated" });
   }
+  
+  // Fallback lookup: if session.user.isChef is undefined, look up from DB
+  if (typeof session.user.isChef === "undefined") {
+    try {
+      const userFromDb = await User.findOne({ email: session.user.email });
+      session.user.isChef = userFromDb?.isChef || false;
+      console.log("[orders.js] Fallback: user.isChef set to", session.user.isChef);
+    } catch (error) {
+      console.error("[orders.js] Error during fallback lookup:", error);
+      session.user.isChef = false;
+    }
+  }
+  
   const email = session.user.email;
   console.log("[orders.js] Logged-in user:", email, "isChef:", session.user.isChef);
 
   switch (req.method) {
-    // POST: create an order
+    // POST: Create an order
     case "POST": {
-      const { cartItems, location } = req.body;
+      const { cartItems, location, specialInstructions } = req.body;
+      console.log("[orders.js] POST start. cartItems:", cartItems);
       if (!cartItems || cartItems.length === 0) {
-        return res.status(400).json({
-          success: false,
-          message: "Missing cart items"
-        });
+        return res.status(400).json({ success: false, message: "Missing cart items" });
       }
       try {
+        // Optionally assign chefEmail from the first cart item if available
+        const assignedChefEmail = cartItems[0]?.chefEmail || null;
         const newOrder = await Order.create({
           userEmail: email,
           cartItems,
           location: location || "",
           status: "pending",
+          chefEmail: assignedChefEmail,
+          specialInstructions: specialInstructions || "",
         });
-        console.log("[orders.js] Created order:", newOrder._id);
+        console.log("[orders.js] Created order:", newOrder._id, "chefEmail:", newOrder.chefEmail);
         return res.status(200).json({ success: true, order: newOrder });
       } catch (error) {
         console.error("[orders.js] Error creating order:", error);
         return res.status(500).json({ success: false, message: "Server error" });
       }
     }
-    // GET: fetch orders for either chef or regular user
+
+    // GET: Fetch orders based on user role
     case "GET": {
       try {
         const isChef = session.user.isChef;
-        const isDelivery = session.user.isDelivery;
-        console.log("[orders.js] isChef:", isChef, "isDelivery:", isDelivery);
-
+        console.log("[orders.js] isChef:", isChef);
         let orders;
         if (isChef) {
-          // Chef sees orders with status in [pending, accepted, cooking]
-          // or orders assigned to them
+          // For chefs: show orders that are either pending, accepted, or cooking OR assigned to them.
           orders = await Order.find({
             $or: [
               { status: { $in: ["pending", "accepted", "cooking"] } },
               { chefEmail: email }
             ]
           }).sort({ createdAt: -1 });
-        } else if (isDelivery) {
-          // Delivery sees orders with status in [ready, delivering] or assigned to them
-          orders = await Order.find({
-            $or: [
-              { status: { $in: ["ready", "delivering"] } },
-              { deliveryEmail: email }
-            ]
-          }).sort({ createdAt: -1 });
         } else {
-          // Regular user sees their own orders
+          // For regular users: show orders that belong to them.
           orders = await Order.find({ userEmail: email }).sort({ createdAt: -1 });
         }
         console.log("[orders.js] Found orders:", orders.length);
@@ -74,25 +81,22 @@ export default async function handler(req, res) {
         return res.status(500).json({ success: false, message: "Server error" });
       }
     }
-    // PUT: update order status
+
+    // PUT: Update order status
     case "PUT": {
-      const { orderId, status, chefMessage } = req.body;
+      const { orderId, status } = req.body;
       if (!orderId || !status) {
         return res.status(400).json({ success: false, message: "Missing orderId or status" });
       }
       try {
-        let updateFields = { status };
-        // If a chef is updating the order
+        const updateFields = { status };
+        // If a chef updates the order (accepted, cooking, ready)
         if (["accepted", "cooking", "ready"].includes(status)) {
           updateFields.chefEmail = email;
         }
-        // If a delivery person is updating
-        if (["delivering", "completed"].includes(status)) {
+        // If a delivery person updates the order (delivering, completed, cancelled)
+        if (["delivering", "completed", "cancelled"].includes(status)) {
           updateFields.deliveryEmail = email;
-        }
-        // If there's a chefMessage provided
-        if (chefMessage) {
-          updateFields.chefMessage = chefMessage;
         }
         const updatedOrder = await Order.findByIdAndUpdate(orderId, updateFields, { new: true });
         if (!updatedOrder) {
@@ -105,6 +109,7 @@ export default async function handler(req, res) {
         return res.status(500).json({ success: false, message: "Server error" });
       }
     }
+
     default:
       return res.status(405).json({ success: false, message: "Method not allowed" });
   }

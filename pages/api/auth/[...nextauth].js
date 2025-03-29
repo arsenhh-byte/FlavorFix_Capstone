@@ -1,4 +1,3 @@
-// pages/api/auth/[...nextauth].js
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcrypt";
@@ -14,27 +13,27 @@ export default NextAuth({
         password: { label: "Password", type: "password" },
       },
       async authorize(credentials) {
-        console.log("[nextauth] authorize() start");
+        console.log("[nextauth] authorize start");
         await dbConnect();
         const existingUser = await User.findOne({ email: credentials.email });
         if (!existingUser) {
-          console.log("[nextauth] User not found");
+          console.log("[nextauth] user not found");
           return null;
         }
-
-        // Compare password
         const validPassword = await bcrypt.compare(
           credentials.password,
           existingUser.password
         );
         if (!validPassword) {
-          console.log("[nextauth] Invalid password");
+          console.log("[nextauth] invalid password");
           return null;
         }
-
-        console.log("[nextauth] Found user:", existingUser.email, "isChef:", existingUser.isChef);
-
-        // Must return isChef as part of the user object
+        console.log(
+          "[nextauth] found user:",
+          existingUser.email,
+          "isChef:",
+          existingUser.isChef
+        );
         return {
           id: existingUser._id.toString(),
           name: existingUser.username,
@@ -53,6 +52,10 @@ export default NextAuth({
         token.name = user.name;
         token.isChef = user.isChef;
       }
+      // Ensure isChef is always defined
+      if (typeof token.isChef === "undefined") {
+        token.isChef = false;
+      }
       return token;
     },
     async session({ session, token }) {
@@ -63,7 +66,6 @@ export default NextAuth({
       return session;
     },
     async redirect({ baseUrl, session }) {
-      // If chef, go to chef dashboard
       if (session?.user?.isChef) {
         return baseUrl + "/chef/dashboard";
       }

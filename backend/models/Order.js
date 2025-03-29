@@ -2,23 +2,27 @@
 const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
-  userEmail: { type: String, required: true },       // Customer’s email
+  userEmail: { type: String, required: true },
   cartItems: [
     {
       recipe_id: String,
       recipeTitle: String,
       quantity: Number,
-      price: Number
+      price: Number,
+      chefEmail: String,       // if the user picks a specific chef
+      deliveryAddress: String, // can be stored per item or at the order level
     }
   ],
-  location: { type: String, default: "" },           // Delivery address (or lat/long)
-  chefEmail: { type: String, default: null },          // Assigned chef’s email
-  deliveryEmail: { type: String, default: null },      // Assigned delivery person’s email
-  status: { 
-    type: String, 
+  location: { type: String, default: "" },
+  chefEmail: { type: String, default: null },
+  deliveryEmail: { type: String, default: null },
+  status: {
+    type: String,
     enum: ["pending", "accepted", "cooking", "ready", "delivering", "completed", "cancelled"],
-    default: "pending" 
+    default: "pending",
   },
+  specialInstructions: { type: String, default: "" }, // <-- New field for user instructions
+  chefMessage: { type: String, default: "" },
   createdAt: { type: Date, default: Date.now },
 });
 

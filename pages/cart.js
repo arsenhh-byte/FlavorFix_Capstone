@@ -1,78 +1,124 @@
+// pages/cart.js
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useCart } from "../context/CartContext";
+import styles from "../styles/cart.module.css";
 
-export default function Cart() {
-  const { data: session } = useSession();
+export default function CartPage() {
+  const { data: session, status } = useSession();
   const { cartItems, clearCart } = useCart();
-  const [location, setLocation] = useState("");
-  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const [userInstructions, setUserInstructions] = useState("");
+  const [order, setOrder] = useState(null); // Store created order
 
-  // Example "Place Order" function
-  const handlePlaceOrder = async () => {
-    if (!session) {
-      setError("Please log in to place an order.");
-      return;
-    }
+  const handleCheckout = async () => {
     if (cartItems.length === 0) {
-      setError("Your cart is empty.");
+      alert("Your cart is empty. Please add items first.");
+      return;
+    }
+    if (status !== "authenticated") {
+      alert("Please log in first to place an order.");
       return;
     }
 
-    setError("");
-    console.log("[Cart] Placing order with items:", cartItems);
+    console.log("[CartPage] Placing order for user:", session.user.email);
+    console.log("[CartPage] Cart items:", cartItems);
 
     try {
       const response = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          cartItems,
-          location: location || "", // optional
-        }),
+        // Include userInstructions in the body
+        body: JSON.stringify({ cartItems, location: "User's address", specialInstructions: userInstructions }),
       });
       const data = await response.json();
-      console.log("[Cart] POST /api/orders response:", data);
-
+      console.log("[CartPage] /api/orders POST response:", data);
       if (data.success) {
-        alert("Order created successfully!");
-        // Optionally clear the cart or redirect
+        setOrder(data.order);
+        setMessage(`Order placed! Order ID: ${data.order._id}`);
+      } else {
+        setMessage(`Order failed: ${data.message}`);
+      }
+    } catch (error) {
+      console.error("[CartPage] Error placing order:", error);
+      setMessage("Error placing order. See console for details.");
+    }
+  };
+
+  // Cancel the order if the user changes their mind (only if order exists and is cancelable)
+  const handleCancelOrder = async () => {
+    if (!order) return;
+    try {
+      const response = await fetch("/api/orders", {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        // Update the order status to "cancelled"
+        body: JSON.stringify({ orderId: order._id, status: "cancelled" }),
+      });
+      const data = await response.json();
+      if (data.success) {
+        setMessage("Order cancelled.");
+        setOrder(null);
         clearCart();
       } else {
-        setError("Error: " + data.message);
+        setMessage("Failed to cancel order: " + data.message);
       }
-    } catch (err) {
-      console.error("[Cart] Error placing order:", err);
-      setError("Failed to place order. See console for details.");
+    } catch (error) {
+      console.error("[CartPage] Error cancelling order:", error);
+      setMessage("Error cancelling order. See console for details.");
     }
   };
 
   return (
-    <div style={{ padding: "20px" }}>
-      <h1>My Cart</h1>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {cartItems.length === 0 ? (
-        <p>Your cart is empty.</p>
+    <div className={styles.cartContainer}>
+      <h1>Your Cart</h1>
+      {cartItems.length === 0 && !order ? (
+        <p className={styles.emptyMessage}>Your cart is empty.</p>
       ) : (
         <>
-          <ul>
-            {cartItems.map((item) => (
-              <li key={item.recipe_id}>
-                {item.recipeTitle} x {item.quantity}
+          <ul className={styles.cartList}>
+            {cartItems.map((item, i) => (
+              <li key={i} className={styles.cartItem}>
+                <div className={styles.itemDetails}>
+                  <h3>{item.title || item.recipeTitle}</h3>
+                  <p><strong>Chef:</strong> {item.chefEmail || "Unassigned"}</p>
+                  <p><strong>Address:</strong> {item.deliveryAddress || "N/A"}</p>
+                </div>
               </li>
             ))}
           </ul>
-          <div style={{ margin: "10px 0" }}>
-            <label>Delivery Location: </label>
-            <input
-              type="text"
-              value={location}
-              onChange={(e) => setLocation(e.target.value)}
+          <div className={styles.instructionsSection}>
+            <label htmlFor="instructions" className={styles.instructionsLabel}>
+              Special Instructions (e.g. allergies):
+            </label>
+            <textarea
+              id="instructions"
+              className={styles.instructionsInput}
+              value={userInstructions}
+              onChange={(e) => setUserInstructions(e.target.value)}
+              placeholder="Enter any special instructions..."
             />
           </div>
-          <button onClick={handlePlaceOrder}>Place Order</button>
+          {order ? (
+            <>
+              <p className={styles.message}>
+                Order ID: {order._id} | Status: {order.status}
+              </p>
+              {/* Show Cancel Order if order is still pending */}
+              {order.status === "pending" && (
+                <button onClick={handleCancelOrder} className={styles.cancelButton}>
+                  Cancel Order
+                </button>
+              )}
+            </>
+          ) : (
+            <button onClick={handleCheckout} className={styles.checkoutButton}>
+              Checkout
+            </button>
+          )}
         </>
       )}
+      {message && <p className={styles.message}>{message}</p>}
     </div>
   );
 }

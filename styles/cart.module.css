@@ -41,14 +41,6 @@
   border-bottom: none;
 }
 
-.itemImage {
-  width: 70px;
-  height: 70px;
-  object-fit: cover;
-  border-radius: 4px;
-  margin-right: 15px;
-}
-
 .itemDetails {
   flex-grow: 1;
 }
@@ -59,45 +51,25 @@
   color: #333;
 }
 
-.itemDetails p {
-  margin: 2px 0;
+.instructionsSection {
+  margin: 20px 0;
+}
+
+.instructionsLabel {
+  display: block;
   font-size: 14px;
-  color: #555;
+  margin-bottom: 5px;
+  font-weight: bold;
 }
 
-.deliveryAddress {
+.instructionsInput {
+  width: 100%;
+  height: 80px;
+  padding: 8px;
   font-size: 14px;
-  color: #444;
-  margin-top: 4px;
-}
-
-.quantityControls {
-  display: flex;
-  align-items: center;
-  margin-top: 8px;
-}
-
-.qtyButton {
-  background-color: #f1f1f1;
-  color: #333;
-  border: none;
-  padding: 4px 8px;
+  border: 1px solid #ccc;
   border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  margin-right: 6px;
-}
-
-.qtyButton:hover {
-  background-color: #e0e0e0;
-}
-
-.qtyValue {
-  font-size: 14px;
-  margin-right: 6px;
-  min-width: 20px;
-  text-align: center;
-  display: inline-block;
+  resize: vertical;
 }
 
 .cartFooter {
@@ -106,11 +78,6 @@
   justify-content: space-between;
   margin-top: 20px;
   flex-wrap: wrap;
-}
-
-.totalItems {
-  font-size: 1rem;
-  margin-bottom: 10px;
 }
 
 .checkoutButton {
@@ -128,9 +95,25 @@
   background-color: #388e3c;
 }
 
-.orderStatus {
+.cancelButton {
+  background-color: #ff5252;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease;
+  margin-top: 10px;
+}
+
+.cancelButton:hover {
+  background-color: #ff1744;
+}
+
+.message {
   text-align: center;
-  margin: 20px 0;
-  font-size: 18px;
+  font-size: 16px;
+  margin-top: 20px;
   color: #4ecba2;
 }

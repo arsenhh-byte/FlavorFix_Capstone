@@ -1,3 +1,4 @@
+// pages/choose-chef.js
 import React, { useState, useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/router";
@@ -13,6 +14,7 @@ const dummyChefs = [
     experience: "15 years",
     description: "Specializes in fine dining and fusion recipes.",
     image: "/gordon.jpg",
+    email: "gordon@gmail.com" // must match a user in DB if you want
   },
   {
     name: "Chef Jamie",
@@ -21,6 +23,7 @@ const dummyChefs = [
     experience: "10 years",
     description: "Known for quick, simple, and healthy meals.",
     image: "/jamie.jpg",
+    email: "jamie@gmail.com"  // MUST match your jamie in DB
   },
   {
     name: "Chef Nigella",
@@ -29,6 +32,7 @@ const dummyChefs = [
     experience: "12 years",
     description: "Expert in desserts and indulgent home cooking.",
     image: "/nigella.jpg",
+    email: "nigella@gmail.com"
   },
   {
     name: "Chef Aiko",
@@ -37,6 +41,7 @@ const dummyChefs = [
     experience: "8 years",
     description: "Creates unique sushi and ramen fusion dishes.",
     image: "/aiko.jpg",
+    email: "aiko@gmail.com"
   },
   {
     name: "Chef Mateo",
@@ -45,6 +50,7 @@ const dummyChefs = [
     experience: "9 years",
     description: "Paella and tapas specialist with farm-to-table approach.",
     image: "/mateo.jpg",
+    email: "mateo@gmail.com"
   },
   {
     name: "Chef Priya",
@@ -53,6 +59,7 @@ const dummyChefs = [
     experience: "11 years",
     description: "Known for aromatic curries and authentic spice blends.",
     image: "/priya.jpg",
+    email: "priya@gmail.com"
   },
 ];
 
@@ -62,7 +69,6 @@ export default function ChooseChefPage() {
   const [pendingRecipe, setPendingRecipe] = useState(null);
   const carouselRef = useRef(null);
 
-  // Initialize usePlacesAutocomplete hook; it manages its own value.
   const {
     ready,
     value,
@@ -71,7 +77,6 @@ export default function ChooseChefPage() {
     clearSuggestions,
   } = usePlacesAutocomplete({ debounce: 300 });
 
-  // Load pending recipe from localStorage once when the component mounts.
   useEffect(() => {
     const stored = localStorage.getItem("pendingRecipe");
     if (stored) {
@@ -79,7 +84,6 @@ export default function ChooseChefPage() {
     }
   }, []);
 
-  // When a suggestion is clicked, update the address value.
   const handleLocationSelect = async (address) => {
     setValue(address, false);
     clearSuggestions();
@@ -92,7 +96,7 @@ export default function ChooseChefPage() {
     }
   };
 
-  // When a chef is selected, combine pending recipe, chef, and location (from the hook's value)
+  // Attach chef email to the cart item
   const handleSelectChef = (chef) => {
     if (!pendingRecipe) {
       alert("No pending recipe found!");
@@ -102,13 +106,17 @@ export default function ChooseChefPage() {
       alert("Please enter your delivery address before selecting a chef.");
       return;
     }
-    const cartItem = { ...pendingRecipe, chef, deliveryAddress: value };
+    // store the chosen chef’s email
+    const cartItem = {
+      ...pendingRecipe,
+      chefEmail: chef.email,  // crucial to assign the chef's email
+      deliveryAddress: value,
+    };
     addToCart(cartItem);
     localStorage.removeItem("pendingRecipe");
     router.push("/cart");
   };
 
-  // Carousel scroll functions.
   const scrollLeft = () => {
     if (carouselRef.current) {
       carouselRef.current.scrollLeft -= 240;
@@ -132,7 +140,6 @@ export default function ChooseChefPage() {
       <h1>Choose a Chef</h1>
       <p>Please select a chef for your meal and enter your delivery location below:</p>
       
-      {/* Location Input */}
       <div className={styles.locationWrapper}>
         <input
           id="location"
@@ -166,25 +173,18 @@ export default function ChooseChefPage() {
         )}
       </div>
 
-      {/* Chef Carousel */}
       <div className={styles.carouselOuter}>
         <button className={styles.arrowButton} onClick={scrollLeft}>
-          ◀
+          ◀️
         </button>
         <div className={styles.chefsCarousel} ref={carouselRef}>
           {dummyChefs.map((chef, index) => (
             <div key={index} className={styles.chefCard}>
               <img src={chef.image} alt={chef.name} className={styles.chefImage} />
               <h2 className={styles.chefName}>{chef.name}</h2>
-              <p>
-                <strong>Rating:</strong> {chef.rating}
-              </p>
-              <p>
-                <strong>Cuisine:</strong> {chef.cuisine}
-              </p>
-              <p>
-                <strong>Experience:</strong> {chef.experience}
-              </p>
+              <p><strong>Rating:</strong> {chef.rating}</p>
+              <p><strong>Cuisine:</strong> {chef.cuisine}</p>
+              <p><strong>Experience:</strong> {chef.experience}</p>
               <p className={styles.chefDesc}>{chef.description}</p>
               <button
                 className={styles.selectChefButton}
@@ -196,7 +196,7 @@ export default function ChooseChefPage() {
           ))}
         </div>
         <button className={styles.arrowButton} onClick={scrollRight}>
-          ▶
+          ▶️
         </button>
       </div>
     </motion.div>
