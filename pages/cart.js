@@ -6,7 +6,7 @@ import styles from "../styles/cart.module.css";
 
 export default function CartPage() {
   const { data: session, status } = useSession();
-  const { cartItems, clearCart } = useCart();
+  const { cartItems, clearCart, removeFromCart } = useCart();
   const [message, setMessage] = useState("");
   const [userInstructions, setUserInstructions] = useState("");
   const [order, setOrder] = useState(null); // Store created order
@@ -28,8 +28,12 @@ export default function CartPage() {
       const response = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // Include userInstructions in the body
-        body: JSON.stringify({ cartItems, location: "User's address", specialInstructions: userInstructions }),
+        // DO NOT change location logic
+        body: JSON.stringify({ 
+          cartItems, 
+          location: "User's address", 
+          specialInstructions: userInstructions 
+        }),
       });
       const data = await response.json();
       console.log("[CartPage] /api/orders POST response:", data);
@@ -69,6 +73,12 @@ export default function CartPage() {
     }
   };
 
+  // Remove an individual cart item by index
+  const handleRemoveItem = (index) => {
+    removeFromCart(index);
+    setMessage("Item removed from cart.");
+  };
+
   return (
     <div className={styles.cartContainer}>
       <h1>Your Cart</h1>
@@ -84,6 +94,9 @@ export default function CartPage() {
                   <p><strong>Chef:</strong> {item.chefEmail || "Unassigned"}</p>
                   <p><strong>Address:</strong> {item.deliveryAddress || "N/A"}</p>
                 </div>
+                <button onClick={() => handleRemoveItem(i)} className={styles.cancelButton}>
+                  Remove
+                </button>
               </li>
             ))}
           </ul>
@@ -104,7 +117,6 @@ export default function CartPage() {
               <p className={styles.message}>
                 Order ID: {order._id} | Status: {order.status}
               </p>
-              {/* Show Cancel Order if order is still pending */}
               {order.status === "pending" && (
                 <button onClick={handleCancelOrder} className={styles.cancelButton}>
                   Cancel Order
@@ -112,9 +124,14 @@ export default function CartPage() {
               )}
             </>
           ) : (
-            <button onClick={handleCheckout} className={styles.checkoutButton}>
-              Checkout
-            </button>
+            <div className={styles.cartFooter}>
+              <button onClick={handleCheckout} className={styles.checkoutButton}>
+                Checkout
+              </button>
+              <button onClick={clearCart} className={styles.cancelButton}>
+                Clear Cart
+              </button>
+            </div>
           )}
         </>
       )}

@@ -11,14 +11,14 @@ export default function ChefDashboard() {
   useEffect(() => {
     const fetchChefOrders = async () => {
       if (!session) return;
-
-      console.log("[ChefDashboard] session:", session);
-
+      console.log("[ChefDashboard] Session:", session);
       try {
-        const res = await fetch("/api/orders", { method: "GET", cache: "no-store" });
+        const res = await fetch("/api/orders", {
+          method: "GET",
+          cache: "no-store",
+        });
         const data = await res.json();
         console.log("[ChefDashboard] GET /api/orders response:", data);
-
         if (data.success) {
           setOrders(data.orders);
         } else {
@@ -54,9 +54,10 @@ export default function ChefDashboard() {
       });
       const data = await res.json();
       console.log("[ChefDashboard] PUT /api/orders response:", data);
-
       if (data.success) {
-        setOrders((prev) => prev.map((o) => (o._id === orderId ? data.order : o)));
+        setOrders((prev) =>
+          prev.map((order) => (order._id === orderId ? data.order : order))
+        );
       } else {
         console.error("Failed to update order:", data.message);
       }
@@ -67,12 +68,9 @@ export default function ChefDashboard() {
 
   const toggleInstructions = (orderId) => {
     setOrders((prev) =>
-      prev.map((order) => {
-        if (order._id === orderId) {
-          return { ...order, showInstructions: !order.showInstructions };
-        }
-        return order;
-      })
+      prev.map((order) =>
+        order._id === orderId ? { ...order, showInstructions: !order.showInstructions } : order
+      )
     );
   };
 
@@ -85,46 +83,40 @@ export default function ChefDashboard() {
         <p className={styles.noOrdersText}>No orders available at the moment.</p>
       ) : (
         orders.map((order) => {
-          // Grab the first cart item
+          // Read the first cart item
           const firstItem = order.cartItems[0] || {};
-          console.log("[ChefDashboard] firstItem:", firstItem);
+          // Directly use the API fields—no fallback. If missing, nothing will show.
+          const recipeTitle = firstItem.title;
+          const recipeImage = firstItem.image;
+          // For the delivery address, check the cart item's deliveryAddress first;
+          // if missing, use the order-level location.
+          const deliveryAddr = firstItem.deliveryAddress || order.location || "No Address Provided";
 
-          // Fallback logic for recipe title & image
-          const recipeTitle =
-            firstItem.title ||
-            firstItem.recipeTitle ||
-            "No Recipe Title";
-          const recipeImage =
-            firstItem.image ||
-            firstItem.recipeImage ||
-            "/placeholder.jpg";
+          console.log("[ChefDashboard] firstItem:", firstItem);
 
           return (
             <div key={order._id} className={styles.orderCard}>
               <div className={styles.cardHeader}>
-                <div>
-                  <span className={styles.orderId}>Order: {order._id}</span>
-                  <span className={`${styles.statusBadge} ${styles[order.status]}`}>
-                    {order.status}
-                  </span>
-                </div>
+                <span className={styles.orderId}>Order: {order._id}</span>
+                <span className={`${styles.statusBadge} ${styles[order.status]}`}>
+                  {order.status}
+                </span>
               </div>
-
               <div className={styles.recipeSection}>
-                <img
-                  src={recipeImage}
-                  alt={recipeTitle}
-                  className={styles.recipeImage}
-                />
+                {recipeImage ? (
+                  <img src={recipeImage} alt={recipeTitle} className={styles.recipeImage} />
+                ) : (
+                  <p>No image available</p>
+                )}
                 <div className={styles.recipeInfo}>
-                  <h2 className={styles.recipeTitle}>{recipeTitle}</h2>
+                  <h2 className={styles.recipeTitle}>
+                    {recipeTitle ? recipeTitle : "No Title"}
+                  </h2>
                   <p className={styles.deliveryAddress}>
-                    <strong>Delivery Address:</strong>{" "}
-                    {order.location || "User's address not provided"}
+                    <strong>Delivery Address:</strong> {deliveryAddr}
                   </p>
                 </div>
               </div>
-
               <div className={styles.instructionsContainer}>
                 <button
                   className={styles.instructionsToggle}
@@ -134,7 +126,7 @@ export default function ChefDashboard() {
                 </button>
                 {order.showInstructions && (
                   <div className={styles.instructionsContent}>
-                    <h3>Special Instructions from User</h3>
+                    <h3>Special Instructions</h3>
                     <p>
                       {order.specialInstructions && order.specialInstructions.trim() !== ""
                         ? order.specialInstructions
@@ -143,7 +135,6 @@ export default function ChefDashboard() {
                   </div>
                 )}
               </div>
-
               <div className={styles.buttonRow}>
                 {order.status !== "cancelled" && order.status !== "completed" && (
                   <>

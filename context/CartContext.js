@@ -10,51 +10,42 @@ export function useCart() {
 export function CartProvider({ children }) {
   const [cartItems, setCartItems] = useState([]);
 
-  // If item is new, add it with quantity=1. If it already exists, increment quantity.
-  const addToCart = (recipe) => {
+  const addToCart = (item) => {
     setCartItems((prev) => {
-      const existing = prev.find((item) => item.id === recipe.id);
+      const existing = prev.find((i) => i.id === item.id || i.recipe_id === item.recipe_id);
       if (existing) {
-        return prev.map((item) =>
-          item.id === recipe.id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
+        return prev.map((i) =>
+          i.id === item.id || i.recipe_id === item.recipe_id
+            ? { ...i, quantity: i.quantity + 1 }
+            : i
         );
       } else {
-        return [...prev, { ...recipe, quantity: 1 }];
+        return [...prev, { ...item, quantity: 1 }];
       }
     });
   };
 
-  // Remove an entire item from the cart
-  const removeFromCart = (recipeId) => {
-    setCartItems((prev) => prev.filter((item) => item.id !== recipeId));
+  const removeFromCart = (index) => {
+    setCartItems((prev) => prev.filter((_, i) => i !== index));
   };
 
-  // Clear all items from the cart
   const clearCart = () => {
     setCartItems([]);
   };
 
-  // Increment item quantity by 1
-  const incrementQuantity = (recipeId) => {
+  const incrementQuantity = (id) => {
     setCartItems((prev) =>
       prev.map((item) =>
-        item.id === recipeId
-          ? { ...item, quantity: item.quantity + 1 }
-          : item
+        item.id === id || item.recipe_id === id ? { ...item, quantity: item.quantity + 1 } : item
       )
     );
   };
 
-  // Decrement item quantity by 1, remove if quantity goes below 1
-  const decrementQuantity = (recipeId) => {
+  const decrementQuantity = (id) => {
     setCartItems((prev) =>
       prev
         .map((item) =>
-          item.id === recipeId
-            ? { ...item, quantity: item.quantity - 1 }
-            : item
+          item.id === id || item.recipe_id === id ? { ...item, quantity: item.quantity - 1 } : item
         )
         .filter((item) => item.quantity > 0)
     );
@@ -62,14 +53,7 @@ export function CartProvider({ children }) {
 
   return (
     <CartContext.Provider
-      value={{
-        cartItems,
-        addToCart,
-        removeFromCart,
-        clearCart,
-        incrementQuantity,
-        decrementQuantity,
-      }}
+      value={{ cartItems, addToCart, removeFromCart, clearCart, incrementQuantity, decrementQuantity }}
     >
       {children}
     </CartContext.Provider>
