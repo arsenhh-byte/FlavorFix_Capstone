@@ -1,15 +1,15 @@
 .chooseChefContainer {
   padding: 20px;
-  text-align: center;
   max-width: 1200px;
   margin: 0 auto;
+  text-align: center;
 }
 
 .locationWrapper {
+  position: relative;
   margin: 20px auto;
   max-width: 400px;
   text-align: left;
-  position: relative;
 }
 
 .locationInput {
@@ -25,34 +25,33 @@
   top: 100%;
   left: 0;
   right: 0;
-  background-color: #fff;
+  background: #fff;
   border: 1px solid #eee;
   border-top: none;
   z-index: 10;
-  text-align: left;
+}
+
+.suggestion {
+  padding: 8px;
+  cursor: pointer;
+}
+.suggestion:hover {
+  background: #f0f0f0;
 }
 
 .carouselOuter {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  margin-top: 20px;
+  position: relative;
+  margin-top: 30px;
 }
 
 .chefsCarousel {
   display: flex;
-  flex-wrap: nowrap;
   overflow-x: auto;
   scroll-behavior: smooth;
   gap: 20px;
-  max-width: 900px;
-  background-color: #f9f9f9;
   padding: 10px;
-  border-radius: 5px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-  margin: 0 auto;
-  -ms-overflow-style: none;
+  background: #f9f9f9;
+  border-radius: 8px;
   scrollbar-width: none;
 }
 .chefsCarousel::-webkit-scrollbar {
@@ -60,66 +59,71 @@
 }
 
 .chefCard {
+  flex: 0 0 auto;
   width: 220px;
-  flex-shrink: 0;
-  background-color: #fff;
+  background: #fff;
   border-radius: 8px;
-  padding: 10px;
-  text-align: center;
-  box-shadow: 0 2px 4px rgba(0,0,0,0.12);
-  transition: transform 0.2s ease;
+  padding: 12px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  transition: transform 0.2s;
 }
 .chefCard:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px);
 }
 
 .chefImage {
   width: 100%;
-  height: 250px;
+  height: 300px;
   object-fit: cover;
-  border-radius: 5px;
+  border-radius: 4px;
   margin-bottom: 8px;
 }
 
 .chefName {
-  margin: 10px 0 5px;
+  margin: 8px 0 4px;
   font-size: 18px;
   font-weight: 600;
 }
 
 .chefDesc {
   font-size: 0.9rem;
-  margin-bottom: 10px;
   color: #555;
+  margin: 8px 0;
 }
 
 .selectChefButton {
-  background-color: #58c;
+  margin-top: auto;
+  padding: 8px 12px;
+  background: #4ecba2;
   color: #fff;
   border: none;
-  padding: 8px 12px;
-  font-size: 14px;
   border-radius: 4px;
   cursor: pointer;
-  margin-top: auto;
 }
 .selectChefButton:hover {
-  background-color: #46a;
+  background: #36a380;
 }
 
 .arrowButton {
-  background-color: #58c;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0,0,0,0.4);
   color: #fff;
   border: none;
-  font-size: 1.5rem;
-  width: 40px;
-  height: 40px;
-  cursor: pointer;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+  z-index: 1;
+  transition: background 0.2s;
 }
 .arrowButton:hover {
-  background-color: #46a;
+  background: rgba(0,0,0,0.6);
 }
+
+.left  { left: 8px;  }
+.right { right: 8px; }

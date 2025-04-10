@@ -1,119 +1,217 @@
-/* styles/cart.module.css */
+/* Container */
 .cartContainer {
-  max-width: 800px;
-  margin: 40px auto;
-  padding: 20px;
-  font-family: "Helvetica Neue", Arial, sans-serif;
-  color: #333;
-  background-color: #fff;
-  border: 2px solid #eee;
+  max-width: 700px;
+  margin: 30px auto;
+  padding: 16px 24px;
+  background: #fff;
+  border: 1px solid #eee;
   border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  font-family: "Helvetica Neue", Arial, sans-serif;
+  text-align: center;
+  box-sizing: border-box;
 }
 
+/* Title */
 .cartContainer h1 {
-  text-align: center;
-  margin-bottom: 20px;
-  font-size: 2rem;
+  margin-bottom: 16px;
+  font-size: 1.75rem;
+  font-weight: 600;
 }
 
+/* Empty message */
 .emptyMessage {
-  text-align: center;
   color: #777;
-  font-size: 18px;
+  font-size: 16px;
   margin-top: 20px;
 }
 
+/* List of items */
 .cartList {
   list-style: none;
+  margin: 0;
   padding: 0;
-  margin: 20px 0;
 }
 
+/* Each item row */
 .cartItem {
   display: flex;
+  justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid #ddd;
   padding: 10px 0;
+  border-bottom: 1px solid #ddd;
 }
 
-.cartItem:last-child {
-  border-bottom: none;
+/* LEFT SECTION: image + info */
+.itemLeft {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+  min-width: 0;
+  text-align: left;
 }
 
-.itemDetails {
-  flex-grow: 1;
+.itemImage {
+  width: 150px;
+  height: 150px;
+  object-fit: cover;
+  border-radius: 4px;
+  max-width: 100%;
 }
 
-.itemDetails h3 {
-  margin: 0 0 5px;
-  font-size: 16px;
-  color: #333;
+.itemInfo {
+  display: flex;
+  flex-direction: column;
 }
 
+.itemTitle {
+  margin: 0 0 4px;
+  font-size: 1rem;
+  font-weight: 600;
+}
+
+/* RIGHT SECTION: quantity controls + remove */
+.itemRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  text-align: center;
+}
+
+.quantityControl {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.qtyButton {
+  width: 22px;
+  height: 22px;
+  border: 1px solid #ccc;
+  background: #f9f9f9;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.qtyValue {
+  min-width: 20px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.removeButton {
+  background: #999;
+  color: #fff;
+  border: none;
+  padding: 8px 15px;
+  border-radius: 4px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.removeButton:hover {
+  background: #777;
+}
+
+/* Special Instructions */
 .instructionsSection {
-  margin: 20px 0;
+  margin: 16px 0;
+  text-align: left;
 }
 
 .instructionsLabel {
   display: block;
+  font-weight: 600;
+  margin-bottom: 4px;
   font-size: 14px;
-  margin-bottom: 5px;
-  font-weight: bold;
 }
 
 .instructionsInput {
   width: 100%;
-  height: 80px;
-  padding: 8px;
+  height: 60px;
+  padding: 6px;
   font-size: 14px;
   border: 1px solid #ccc;
   border-radius: 4px;
   resize: vertical;
+  box-sizing: border-box;
 }
 
+/* Footer */
 .cartFooter {
   display: flex;
+  justify-content: center;
   align-items: center;
-  justify-content: space-between;
-  margin-top: 20px;
+  gap: 10px;
+  margin-top: 16px;
   flex-wrap: wrap;
 }
 
-.checkoutButton {
-  background-color: #4caf50;
-  color: #fff;
+.cartFooter button {
+  flex: 1 1 auto;
+  min-width: 120px;
+  padding: 6px 12px;
   border: none;
-  padding: 8px 12px;
   border-radius: 4px;
-  cursor: pointer;
   font-size: 14px;
-  transition: background-color 0.2s ease;
+  cursor: pointer;
+}
+
+.checkoutButton {
+  background: #4caf50;
+  color: #fff;
 }
 
 .checkoutButton:hover {
-  background-color: #388e3c;
+  background: #388e3c;
+}
+
+.clearCartButton {
+  background: #ff5252;
+  color: #fff;
+}
+
+.clearCartButton:hover {
+  background: #ff1744;
 }
 
 .cancelButton {
-  background-color: #ff5252;
+  background: #ff5252;
   color: #fff;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.2s ease;
-  margin-top: 10px;
 }
 
 .cancelButton:hover {
-  background-color: #ff1744;
+  background: #ff1744;
 }
 
 .message {
-  text-align: center;
-  font-size: 16px;
-  margin-top: 20px;
+  margin-top: 12px;
+  font-size: 14px;
   color: #4ecba2;
+  text-align: center;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .cartContainer {
+    padding: 12px 16px;
+  }
+  
+  .itemImage {
+    width: 100px;
+    height: 100px;
+  }
+  
+  .cartFooter button {
+    min-width: 100px;
+    font-size: 13px;
+  }
 }

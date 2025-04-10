@@ -1,4 +1,3 @@
-// pages/cart.js
 import React, { useState } from "react";
 import { useSession } from "next-auth/react";
 import { useCart } from "../context/CartContext";
@@ -6,13 +5,20 @@ import styles from "../styles/cart.module.css";
 
 export default function CartPage() {
   const { data: session, status } = useSession();
-  const { cartItems, clearCart, removeFromCart } = useCart();
+  const {
+    cartItems,
+    clearCart,
+    removeFromCart,
+    incrementQuantity,
+    decrementQuantity,
+  } = useCart();
+
   const [message, setMessage] = useState("");
   const [userInstructions, setUserInstructions] = useState("");
-  const [order, setOrder] = useState(null); // Store created order
+  const [order, setOrder] = useState(null);
 
   const handleCheckout = async () => {
-    if (cartItems.length === 0) {
+    if (!cartItems.length) {
       alert("Your cart is empty. Please add items first.");
       return;
     }
@@ -20,23 +26,20 @@ export default function CartPage() {
       alert("Please log in first to place an order.");
       return;
     }
-
-    console.log("[CartPage] Placing order for user:", session.user.email);
+    console.log("[CartPage] Placing order for:", session.user.email);
     console.log("[CartPage] Cart items:", cartItems);
-
     try {
       const response = await fetch("/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        // DO NOT change location logic
-        body: JSON.stringify({ 
-          cartItems, 
-          location: "User's address", 
-          specialInstructions: userInstructions 
+        body: JSON.stringify({
+          cartItems,
+          location: "User's address",
+          specialInstructions: userInstructions,
         }),
       });
       const data = await response.json();
-      console.log("[CartPage] /api/orders POST response:", data);
+      console.log("[CartPage] Order response:", data);
       if (data.success) {
         setOrder(data.order);
         setMessage(`Order placed! Order ID: ${data.order._id}`);
@@ -49,14 +52,12 @@ export default function CartPage() {
     }
   };
 
-  // Cancel the order if the user changes their mind (only if order exists and is cancelable)
   const handleCancelOrder = async () => {
     if (!order) return;
     try {
       const response = await fetch("/api/orders", {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        // Update the order status to "cancelled"
         body: JSON.stringify({ orderId: order._id, status: "cancelled" }),
       });
       const data = await response.json();
@@ -73,7 +74,6 @@ export default function CartPage() {
     }
   };
 
-  // Remove an individual cart item by index
   const handleRemoveItem = (index) => {
     removeFromCart(index);
     setMessage("Item removed from cart.");
@@ -89,17 +89,53 @@ export default function CartPage() {
           <ul className={styles.cartList}>
             {cartItems.map((item, i) => (
               <li key={i} className={styles.cartItem}>
-                <div className={styles.itemDetails}>
-                  <h3>{item.title || item.recipeTitle}</h3>
-                  <p><strong>Chef:</strong> {item.chefEmail || "Unassigned"}</p>
-                  <p><strong>Address:</strong> {item.deliveryAddress || "N/A"}</p>
+                <div className={styles.itemLeft}>
+                  {item.image && (
+                    <img
+                      src={item.image}
+                      alt={item.title || item.recipeTitle}
+                      className={styles.itemImage}
+                    />
+                  )}
+                  <div className={styles.itemInfo}>
+                    <h3 className={styles.itemTitle}>
+                      {item.title || item.recipeTitle}
+                    </h3>
+                    <p>
+                      <strong>Chef:</strong> {item.chefEmail || "Unassigned"}
+                    </p>
+                    <p>
+                      <strong>Address:</strong> {item.deliveryAddress || "N/A"}
+                    </p>
+                  </div>
                 </div>
-                <button onClick={() => handleRemoveItem(i)} className={styles.cancelButton}>
-                  Remove
-                </button>
+                <div className={styles.itemRight}>
+                  <div className={styles.quantityControl}>
+                    <button
+                      onClick={() => decrementQuantity(item.id)}
+                      className={styles.qtyButton}
+                    >
+                      -
+                    </button>
+                    <span className={styles.qtyValue}>{item.quantity}</span>
+                    <button
+                      onClick={() => incrementQuantity(item.id)}
+                      className={styles.qtyButton}
+                    >
+                      +
+                    </button>
+                  </div>
+                  <button
+                    onClick={() => handleRemoveItem(i)}
+                    className={styles.removeButton}
+                  >
+                    Remove
+                  </button>
+                </div>
               </li>
             ))}
           </ul>
+
           <div className={styles.instructionsSection}>
             <label htmlFor="instructions" className={styles.instructionsLabel}>
               Special Instructions (e.g. allergies):
@@ -112,29 +148,39 @@ export default function CartPage() {
               placeholder="Enter any special instructions..."
             />
           </div>
-          {order ? (
-            <>
-              <p className={styles.message}>
-                Order ID: {order._id} | Status: {order.status}
-              </p>
-              {order.status === "pending" && (
-                <button onClick={handleCancelOrder} className={styles.cancelButton}>
-                  Cancel Order
+
+          <div className={styles.cartFooter}>
+            {order ? (
+              <>
+                <p className={styles.message}>
+                  Order ID: {order._id} | Status: {order.status}
+                </p>
+                {order.status === "pending" && (
+                  <button
+                    onClick={handleCancelOrder}
+                    className={styles.cancelButton}
+                  >
+                    Cancel Order
+                  </button>
+                )}
+              </>
+            ) : (
+              <>
+                <button
+                  onClick={handleCheckout}
+                  className={styles.checkoutButton}
+                >
+                  Checkout
                 </button>
-              )}
-            </>
-          ) : (
-            <div className={styles.cartFooter}>
-              <button onClick={handleCheckout} className={styles.checkoutButton}>
-                Checkout
-              </button>
-              <button onClick={clearCart} className={styles.cancelButton}>
-                Clear Cart
-              </button>
-            </div>
-          )}
+                <button onClick={clearCart} className={styles.clearCartButton}>
+                  Clear Cart
+                </button>
+              </>
+            )}
+          </div>
         </>
       )}
+
       {message && <p className={styles.message}>{message}</p>}
     </div>
   );
